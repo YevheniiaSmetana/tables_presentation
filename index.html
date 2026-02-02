@@ -1,0 +1,2902 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Budget & WebOrder Tables — UX/UI Design Review</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+   body {
+       font-family: 'Inter', sans-serif;
+       margin: 0;
+       padding: 0;
+       background-color: #1a1a1a;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       min-height: 100vh;
+       /* overflow: hidden; */
+   }
+
+   /* Универсальная защита от обрезания */
+.slide > div {
+    min-height: auto !important;
+    max-height: 620px; /* 720px высота - 100px для навигации */
+}
+
+/* Элементы на дне слайда */
+.ai-box,
+.logic-statement,
+.ai-assessment,
+.footer {
+    margin-bottom: 20px !important;
+}
+   
+   /* Presentation Container */
+   .presentation-wrapper {
+       position: relative;
+       width: 1280px;
+       height: 720px;
+       background: white;
+       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+       border-radius: 8px;
+       /* overflow: hidden; */
+   }
+   
+   /* Slides Container */
+   .slides-container {
+       width: 100%;
+       height: 100%;
+       position: relative;
+   }
+   
+   .slide {
+       position: absolute;
+       width: 100%;
+       height: calc(100% - 80px);
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.5s ease-in-out, visibility 0.5s;
+       padding-bottom: 100px;
+        overflow-y: auto;
+   }
+   
+   .slide.active {
+       opacity: 1;
+       visibility: visible;
+       z-index: 10;
+   }
+   
+   /* Navigation Controls */
+   .nav-controls {
+       position: absolute;
+       bottom: 20px;
+       left: 50%;
+       transform: translateX(-50%);
+       display: flex;
+       gap: 12px;
+       z-index: 100;
+       background: rgba(255,255,255,0.95);
+       padding: 12px 20px;
+       border-radius: 30px;
+       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+   }
+   
+   .nav-btn {
+       width: 40px;
+       height: 40px;
+       border: none;
+       background: #4F46E5;
+       color: white;
+       border-radius: 50%;
+       cursor: pointer;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       transition: all 0.3s ease;
+       font-size: 16px;
+   }
+   
+   .nav-btn:hover {
+       background: #4338CA;
+       transform: scale(1.1);
+   }
+   
+   .nav-btn:disabled {
+       background: #D1D5DB;
+       cursor: not-allowed;
+       transform: scale(1);
+   }
+   
+   /* Slide Indicators */
+   .slide-indicators {
+       display: flex;
+       gap: 8px;
+       align-items: center;
+       padding: 0 16px;
+   }
+   
+   .indicator {
+       width: 8px;
+       height: 8px;
+       border-radius: 50%;
+       background: #D1D5DB;
+       cursor: pointer;
+       transition: all 0.3s ease;
+   }
+   
+   .indicator.active {
+       background: #4F46E5;
+       width: 24px;
+       border-radius: 4px;
+   }
+   
+   .indicator:hover {
+       background: #9CA3AF;
+   }
+   
+   /* Slide Counter */
+   .slide-counter {
+       position: absolute;
+       top: 30px;
+       right: 30px;
+       background: rgba(255,255,255,0.95);
+       padding: 8px 16px;
+       border-radius: 20px;
+       font-size: 14px;
+       font-weight: 600;
+       color: #4B5563;
+       z-index: 100;
+       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+   }
+   
+   .current-slide {
+       color: #4F46E5;
+       font-size: 16px;
+   }
+ 
+   /* Keyboard Hint */
+   .keyboard-hint {
+       position: absolute;
+       top: 30px;
+       left: 30px;
+       background: rgba(255,255,255,0.95);
+       padding: 8px 16px;
+       border-radius: 20px;
+       font-size: 12px;
+       color: #6B7280;
+       z-index: 100;
+       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+   
+   .key {
+       background: #F3F4F6;
+       padding: 2px 6px;
+       border-radius: 4px;
+       font-weight: 600;
+       color: #374151;
+       border: 1px solid #D1D5DB;
+   }
+   
+   /* ============= COMMON STYLES ============= */
+   .decorative-blob {
+       position: absolute;
+       border-radius: 50%;
+       filter: blur(80px);
+       z-index: 0;
+       opacity: 0.6;
+   }
+   .blob-1 {
+       width: 600px;
+       height: 600px;
+       top: -200px;
+       right: -100px;
+       background-color: #e0e7ff;
+   }
+   .blob-2 {
+       width: 500px;
+       height: 500px;
+       bottom: -150px;
+       left: -100px;
+       background-color: #f3e8ff;
+   }
+   
+   .content-wrapper {
+       position: relative;
+       z-index: 10;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       height: 100%;
+       padding-left: 100px;
+       padding-right: 80px;
+       flex: 1;
+   }
+   
+   .tag, .slide-tag {
+       display: inline-flex;
+       align-items: center;
+       padding: 8px 16px;
+       background-color: #F3F4F6;
+       color: #4B5563;
+       border-radius: 6px;
+       font-size: 13px;
+       font-weight: 600;
+       margin-bottom: 32px;
+       letter-spacing: 0.05em;
+       text-transform: uppercase;
+       border: 1px solid #E5E7EB;
+   }
+   
+   .tag, .slide-tag {
+       background-color: #EEF2FF;
+       color: #4F46E5;
+       border: none;
+       border-radius: 20px;
+       padding: 6px 12px;
+       margin-bottom: 16px;
+   }
+   
+   .main-title, .title, .slide-title {
+       font-size: 48px;
+       line-height: 1.1;
+       font-weight: 800;
+       color: #111827;
+       margin: 0;
+       letter-spacing: -0.03em;
+   }
+   
+   .main-title {
+       font-size: 60px;
+       margin-bottom: 24px;
+   }
+   
+   .title {
+       font-size: 42px;
+       line-height: 1.2;
+   }
+   
+   .highlight-text {
+       color: #4F46E5;
+   }
+   
+   .divider {
+       width: 60px;
+       height: 6px;
+       background-color: #4F46E5;
+       margin-bottom: 40px;
+       border-radius: 3px;
+   }
+   
+   .subtitle, .slide-subtitle {
+       font-size: 18px;
+       color: #6B7280;
+       margin-top: 12px;
+       font-weight: 400;
+   }
+   
+   .slide-subtitle {
+       font-size: 20px;
+       margin-top: 16px;
+       max-width: 700px;
+   }
+   
+   .bg-pattern {
+       position: absolute;
+       top: 0;
+       right: 0;
+       width: 50%;
+       height: 100%;
+       background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
+       background-size: 24px 24px;
+       opacity: 0.5;
+       z-index: 0;
+       mask-image: linear-gradient(to right, transparent, black);
+       -webkit-mask-image: linear-gradient(to right, transparent, black);
+   }
+   
+   .bg-grid {
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background-image:
+           linear-gradient(rgba(229, 231, 235, 0.5) 1px, transparent 1px),
+           linear-gradient(90deg, rgba(229, 231, 235, 0.5) 1px, transparent 1px);
+       background-size: 40px 40px;
+       z-index: 0;
+       opacity: 0.4;
+   }
+   
+   .bg-circle {
+       position: absolute;
+       top: -150px;
+       right: -150px;
+       width: 600px;
+       height: 600px;
+       background-color: #F3F4F6;
+       border-radius: 50%;
+       opacity: 0.6;
+       z-index: 0;
+   }
+   
+   .bg-shape {
+       position: absolute;
+       top: 0;
+       right: 0;
+       width: 600px;
+       height: 100%;
+       background-color: #F8FAFC;
+       z-index: 0;
+       clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+   }
+   
+   .bg-side-panel {
+       position: absolute;
+       right: 0;
+       top: 0;
+       width: 420px;
+       height: 100%;
+       background-color: #F8FAFC;
+       z-index: 0;
+       border-left: 1px solid #E2E8F0;
+   }
+   
+   .bg-blob {
+       position: absolute;
+       bottom: -100px;
+       right: -100px;
+       width: 400px;
+       height: 400px;
+       background-color: #F3E8FF;
+       border-radius: 50%;
+       filter: blur(80px);
+       opacity: 0.5;
+       z-index: 0;
+   }
+   
+   .accent-bar {
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 8px;
+       height: 100%;
+       background-color: #4F46E5;
+   }
+   
+   .feature-grid {
+       display: grid;
+       grid-template-columns: repeat(2, 1fr);
+       gap: 20px;
+       max-width: 800px;
+   }
+   
+   .feature-item {
+       display: flex;
+       align-items: center;
+       font-size: 18px;
+       color: #374151;
+       font-weight: 500;
+       padding: 12px 16px;
+       background-color: rgba(255, 255, 255, 0.5);
+       border-radius: 8px;
+       border: 1px solid transparent;
+       transition: all 0.3s ease;
+   }
+   
+   .feature-item:hover {
+       border-color: #E5E7EB;
+       background-color: #FFFFFF;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+   }
+   
+   .icon-box {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 32px;
+       height: 32px;
+       background-color: #EEF2FF;
+       border-radius: 6px;
+       margin-right: 16px;
+       color: #4F46E5;
+       font-size: 14px;
+   }
+   
+   .visual-accent {
+       position: absolute;
+       right: 0;
+       top: 0;
+       height: 100%;
+       width: 35%;
+       background-color: #FAFAFA;
+       border-left: 1px solid #F3F4F6;
+       z-index: 1;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+   }
+   
+   .grid-pattern {
+       position: absolute;
+       right: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
+       background-size: 24px 24px;
+       opacity: 0.6;
+   }
+   
+   .prototype-card {
+       background: white;
+       border: 1px solid #E5E7EB;
+       border-radius: 12px;
+       padding: 24px;
+       width: 320px;
+       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+       position: relative;
+       z-index: 5;
+   }
+   
+   .card-row {
+       height: 12px;
+       background-color: #F3F4F6;
+       border-radius: 4px;
+       margin-bottom: 12px;
+       width: 100%;
+   }
+   .card-row.short { width: 60%; }
+   .card-row.medium { width: 80%; }
+   .card-header {
+       height: 16px;
+       background-color: #E0E7FF;
+       border-radius: 4px;
+       margin-bottom: 20px;
+       width: 40%;
+   }
+   .card-btn {
+       height: 32px;
+       background-color: #4F46E5;
+       border-radius: 6px;
+       margin-top: 20px;
+       width: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: white;
+       font-size: 12px;
+       font-weight: 600;
+   }
+ 
+   .meta-footer {
+       bottom: 120px;
+       left: 100px;
+       font-size: 14px;
+       color: #9CA3AF;
+       display: flex;
+       gap: 24px;
+       z-index: 5;
+       margin-top: 10px ;
+   }
+   
+   .header-section {
+       margin-bottom: 60px;
+   }
+   
+   .columns-container {
+       display: flex;
+       gap: 60px;
+       flex: 1;
+   }
+   
+   .col-left {
+       flex: 1.4;
+       background-color: #F9FAFB;
+       border-radius: 16px;
+       padding: 32px;
+       border: 1px solid #E5E7EB;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+   }
+   
+   .col-right {
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+   }
+ 
+   .section-title {
+       font-size: 18px;
+       font-weight: 700;
+       color: #374151;
+       margin-bottom: 24px;
+       display: flex;
+       align-items: center;
+   }
+   
+   .section-title i {
+       margin-right: 10px;
+       color: #4F46E5;
+   }
+   
+   .objective-list {
+       list-style: none;
+       padding: 0;
+       margin: 0;
+   }
+   
+   .objective-item {
+       display: flex;
+       align-items: flex-start;
+       margin-bottom: 20px;
+   }
+   
+   .check-icon {
+       flex-shrink: 0;
+       width: 24px;
+       height: 24px;
+       background-color: #D1FAE5;
+       color: #059669;
+       border-radius: 50%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 12px;
+       margin-right: 16px;
+       margin-top: 2px;
+   }
+   
+   .objective-text {
+       font-size: 18px;
+       color: #1F2937;
+       font-weight: 500;
+       line-height: 1.5;
+   }
+ 
+   .user-card {
+       display: flex;
+       align-items: center;
+       padding: 16px 20px;
+       background-color: white;
+       border: 1px solid #E5E7EB;
+       border-radius: 12px;
+       margin-bottom: 16px;
+       transition: transform 0.2s;
+   }
+   
+   .user-card:hover {
+       border-color: #4F46E5;
+       transform: translateX(5px);
+   }
+   
+   .user-icon {
+       width: 40px;
+       height: 40px;
+       background-color: #EEF2FF;
+       color: #4F46E5;
+       border-radius: 10px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 18px;
+       margin-right: 16px;
+   }
+   
+   .user-info {
+       display: flex;
+       flex-direction: column;
+   }
+   
+   .user-role {
+       font-size: 16px;
+       font-weight: 600;
+       color: #111827;
+   }
+   
+   .user-desc {
+       font-size: 13px;
+       color: #6B7280;
+   }
+ 
+   .bottom-note {
+       margin-top: auto;
+       padding-top: 20px;
+       border-top: 1px solid #E5E7EB;
+       font-size: 14px;
+       color: #6B7280;
+       font-style: italic;
+   }
+   
+   .header {
+       position: relative;
+       z-index: 10;
+       margin-bottom: 50px;
+   }
+   
+   .workflow-container {
+       position: relative;
+       z-index: 10;
+       display: flex;
+       justify-content: space-between;
+       align-items: flex-start;
+       margin-bottom: 50px;
+       padding: 0 10px;
+   }
+   
+   .connection-line {
+       position: absolute;
+       top: 45px;
+       left: 50px;
+       right: 50px;
+       height: 2px;
+       background-color: #E5E7EB;
+       z-index: 0;
+   }
+ 
+   .step-card {
+       width: 190px;
+       position: relative;
+       z-index: 10;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       text-align: center;
+       background-color: transparent;
+   }
+   
+   .icon-wrapper {
+       width: 90px;
+       height: 90px;
+       background-color: white;
+       border: 2px solid #E5E7EB;
+       border-radius: 20px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       margin-bottom: 20px;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+       transition: all 0.3s ease;
+       position: relative;
+   }
+   
+   .step-card:hover .icon-wrapper {
+       border-color: #4F46E5;
+       transform: translateY(-5px);
+       box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.15);
+   }
+ 
+   .step-number {
+       position: absolute;
+       top: -10px;
+       left: -10px;
+       width: 28px;
+       height: 28px;
+       background-color: #111827;
+       color: white;
+       border-radius: 50%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 12px;
+       font-weight: 700;
+       border: 2px solid white;
+   }
+ 
+   .icon {
+       font-size: 32px;
+       color: #4B5563;
+       transition: color 0.3s;
+   }
+   
+   .step-card:hover .icon {
+       color: #4F46E5;
+   }
+ 
+   .step-title {
+       font-size: 16px;
+       font-weight: 700;
+       color: #1F2937;
+       margin-bottom: 8px;
+       line-height: 1.3;
+   }
+ 
+   .step-desc {
+       font-size: 13px;
+       color: #6B7280;
+       line-height: 1.4;
+   }
+ 
+   .ai-box {
+       position: relative;
+       z-index: 10;
+       background-color: #F8FAFC;
+       border-left: 4px solid #8B5CF6;
+       border-radius: 0 8px 8px 0;
+       padding: 24px 32px;
+       display: flex;
+       align-items: center;
+       margin-top: auto;
+       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+   }
+   
+   .ai-icon {
+       width: 48px;
+       height: 48px;
+       background-color: #EDE9FE;
+       color: #8B5CF6;
+       border-radius: 12px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 20px;
+       margin-right: 24px;
+       flex-shrink: 0;
+   }
+   
+   .ai-content h4 {
+       margin: 0 0 4px 0;
+       font-size: 14px;
+       text-transform: uppercase;
+       color: #8B5CF6;
+       letter-spacing: 0.05em;
+       font-weight: 700;
+   }
+   
+   .ai-content p {
+       margin: 0;
+       font-size: 18px;
+       color: #334155;
+       font-weight: 500;
+       font-style: italic;
+   }
+ 
+   .logic-statement {
+       bottom: 160px;
+       left: 80px;
+       font-size: 16px;
+       color: #4B5563;
+       background-color: white;
+       padding: 8px 16px;
+       border-radius: 8px;
+       border: 1px dashed #D1D5DB;
+       z-index: 10;
+       max-width: 500px; 
+   }
+   .logic-statement strong {
+       color: #111827;
+   }
+   
+   .comparison-wrapper {
+       display: flex;
+       gap: 40px;
+       flex: 1;
+       position: relative;
+       z-index: 10;
+   }
+ 
+   .col-card {
+       flex: 1;
+       background-color: #F9FAFB;
+       border-radius: 16px;
+       border: 1px solid #E5E7EB;
+       padding: 24px;
+       display: flex;
+       flex-direction: column;
+       transition: all 0.3s ease;
+   }
+   
+   .col-card.winning {
+       background-color: #FFFFFF;
+       border-color: #4F46E5;
+       box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1), 0 8px 10px -6px rgba(79, 70, 229, 0.1);
+       position: relative;
+   }
+   
+   .badge {
+       position: absolute;
+       top: -12px;
+       right: 24px;
+       background-color: #4F46E5;
+       color: white;
+       padding: 4px 12px;
+       border-radius: 20px;
+       font-size: 12px;
+       font-weight: 600;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+   }
+ 
+   .col-header {
+       display: flex;
+       align-items: center;
+       margin-bottom: 20px;
+       border-bottom: 1px solid #E5E7EB;
+       padding-bottom: 16px;
+   }
+   
+   .col-title {
+       font-size: 20px;
+       font-weight: 700;
+       color: #1F2937;
+   }
+   
+   .col-icon {
+       width: 32px;
+       height: 32px;
+       border-radius: 8px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       margin-right: 12px;
+       font-size: 14px;
+   }
+   .winning .col-icon {
+       background-color: #EEF2FF;
+       color: #4F46E5;
+   }
+   .losing .col-icon {
+       background-color: #F3F4F6;
+       color: #6B7280;
+   }
+ 
+   .img-placeholder {
+       height: 160px;
+       background-color: #E5E7EB;
+       border-radius: 8px;
+       margin-bottom: 24px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: #9CA3AF;
+       font-size: 14px;
+       font-weight: 500;
+       border: 2px dashed #D1D5DB;
+   }
+   .winning .img-placeholder {
+       background-color: #F5F3FF;
+       border-color: #C7D2FE;
+       color: #818CF8;
+   }
+ 
+   .list-group {
+       flex: 1;
+   }
+   .list-item {
+       display: flex;
+       align-items: flex-start;
+       margin-bottom: 12px;
+       font-size: 15px;
+       color: #4B5563;
+       line-height: 1.5;
+   }
+   .list-icon {
+       margin-right: 12px;
+       margin-top: 4px;
+       font-size: 12px;
+   }
+   .winning .list-icon {
+       color: #10B981;
+   }
+   .losing .list-icon {
+       color: #EF4444;
+   }
+ 
+   .ai-score-card {
+       bottom: 44px;
+       right: 24px;
+       background-color: #F0FDF4;
+       border: 1px solid #BBF7D0;
+       border-radius: 12px;
+       padding: 16px;
+       display: flex;
+       align-items: center;
+       gap: 16px;
+       width: 280px;
+       z-index: 20;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+   }
+   .score-circle {
+       width: 50px;
+       height: 50px;
+       border-radius: 50%;
+       background-color: #10B981;
+       color: white;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-weight: 800;
+       font-size: 18px;
+       flex-shrink: 0;
+       border: 3px solid #DCFCE7;
+   }
+   .score-text h4 {
+       margin: 0;
+       font-size: 14px;
+       color: #166534;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       font-weight: 700;
+   }
+   .score-text p {
+       margin: 4px 0 0 0;
+       font-size: 12px;
+       color: #15803D;
+       line-height: 1.3;
+   }
+   
+   .visual-col {
+       flex: 1.4;
+       display: flex;
+       flex-direction: column;
+   }
+   
+   .screenshot-placeholder {
+       background-color: #F9FAFB;
+       border: 2px dashed #E5E7EB;
+       border-radius: 12px;
+       flex: 1;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       position: relative;
+       /* overflow: hidden; */
+       margin-bottom: 20px;
+   }
+   
+   .mockup-content {
+       text-align: center;
+       color: #9CA3AF;
+   }
+   
+   .flow-strip {
+       background-color: #F3F4F6;
+       border-radius: 8px;
+       padding: 12px 16px;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       font-size: 12px;
+       color: #4B5563;
+       font-weight: 500;
+   }
+   .flow-item {
+       display: flex;
+       align-items: center;
+   }
+   .flow-arrow {
+       color: #9CA3AF;
+       margin: 0 8px;
+       font-size: 10px;
+   }
+ 
+   .info-col {
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+   }
+   
+   .logic-section {
+       margin-bottom: 32px;
+   }
+   .section-header {
+       font-size: 18px;
+       font-weight: 700;
+       color: #1F2937;
+       margin-bottom: 16px;
+       display: flex;
+       align-items: center;
+   }
+   .section-header i {
+       color: #4F46E5;
+       margin-right: 10px;
+   }
+   
+   .logic-list {
+       display: flex;
+       flex-direction: column;
+       gap: 16px;
+   }
+   .logic-item {
+       display: flex;
+       align-items: center;
+       background-color: white;
+       border: 1px solid #E5E7EB;
+       padding: 12px 16px;
+       border-radius: 8px;
+       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+   }
+   .logic-badge {
+       font-size: 11px;
+       font-weight: 700;
+       text-transform: uppercase;
+       padding: 4px 8px;
+       border-radius: 4px;
+       margin-right: 12px;
+       width: 70px;
+       text-align: center;
+       flex-shrink: 0;
+   }
+   .badge-left { background-color: #DBEAFE; color: #1E40AF; }
+   .badge-center { background-color: #F3E8FF; color: #6B21A8; }
+   .badge-right { background-color: #DCFCE7; color: #166534; }
+   
+   .logic-text {
+       font-size: 14px;
+       color: #374151;
+       font-weight: 500;
+   }
+ 
+   .ai-assessment {
+       margin-top: auto;
+       background-color: #F8FAFC;
+       border-left: 4px solid #4F46E5;
+       border-radius: 0 8px 8px 0;
+       padding: 20px;
+       position: relative;
+   }
+   .ai-badge {
+       position: absolute;
+       top: -12px;
+       right: 20px;
+       background-color: #4F46E5;
+       color: white;
+       font-size: 12px;
+       font-weight: 700;
+       padding: 4px 12px;
+       border-radius: 12px;
+   }
+   .ai-score {
+       display: flex;
+       align-items: baseline;
+       margin-bottom: 8px;
+   }
+   .score-big {
+       font-size: 32px;
+       font-weight: 800;
+       color: #111827;
+       margin-right: 8px;
+       line-height: 1;
+   }
+   .score-total {
+       font-size: 16px;
+       color: #6B7280;
+       font-weight: 500;
+   }
+   .ai-note {
+       font-size: 14px;
+       color: #4B5563;
+       line-height: 1.4;
+       font-style: italic;
+   }
+ 
+   .group-indicator {
+       position: absolute;
+       bottom: 0;
+       height: 4px;
+   }
+   .gi-left { left: 0; width: 33%; background-color: #3B82F6; }
+   .gi-center { left: 33%; width: 33%; background-color: #A855F7; }
+   .gi-right { left: 66%; width: 34%; background-color: #22C55E; }
+   
+   /* Slide 6 specific styles */
+   .filter-mockup {
+       background: white;
+       border: 1px solid #E5E7EB;
+       border-radius: 8px;
+       padding: 16px;
+       width: 80%;
+       display: flex;
+       gap: 12px;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+   }
+   
+   .mock-pill {
+       height: 32px;
+       background: #F3F4F6;
+       border-radius: 6px;
+       flex: 1;
+   }
+   .mock-pill.active {
+       background: #E0E7FF;
+       border: 1px solid #4F46E5;
+   }
+   
+   .optional-note {
+       margin-top: 15px;
+       font-size: 13px;
+       color: #6B7280;
+       border-top: 1px dashed #E5E7EB;
+       padding-top: 10px;
+   }
+   
+   /* Slide 7 styles */
+   .mockup-container {
+       background: white;
+       border: 1px solid #E2E8F0;
+       border-radius: 12px;
+       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+       padding: 24px;
+       position: relative;
+   }
+ 
+   .table-row {
+       display: flex;
+       align-items: center;
+       padding: 16px;
+       border-bottom: 1px solid #F1F5F9;
+       transition: background-color 0.2s;
+   }
+   .table-row:last-child {
+       border-bottom: none;
+   }
+   .table-row:hover {
+       background-color: #F8FAFC;
+   }
+   
+   .col-info {
+       flex: 1;
+   }
+   .col-status {
+       width: 120px;
+       padding: 0 16px;
+   }
+   .col-actions {
+       width: 200px;
+       display: flex;
+       gap: 8px;
+       justify-content: flex-end;
+   }
+ 
+   .text-sm { font-size: 14px; color: #1E293B; font-weight: 500; }
+   .text-xs { font-size: 12px; color: #64748B; }
+ 
+   .badge-pending {
+       background-color: #FEF3C7;
+       color: #B45309;
+       padding: 4px 10px;
+       border-radius: 12px;
+       font-size: 12px;
+       font-weight: 600;
+       display: inline-block;
+   }
+   .badge-paid {
+       background-color: #DCFCE7;
+       color: #15803D;
+       padding: 4px 10px;
+       border-radius: 12px;
+       font-size: 12px;
+       font-weight: 600;
+       display: inline-block;
+   }
+ 
+   .btn {
+       border: none;
+       padding: 6px 12px;
+       border-radius: 6px;
+       font-size: 12px;
+       font-weight: 600;
+       cursor: pointer;
+       display: flex;
+       align-items: center;
+       gap: 6px;
+       transition: transform 0.1s;
+   }
+   .btn:active { transform: scale(0.98); }
+   
+   .btn-approve {
+       background-color: #10B981;
+       color: white;
+   }
+   .btn-reject {
+       background-color: #FFF1F2;
+       color: #BE123C;
+       border: 1px solid #FECDD3;
+   }
+   .btn-download {
+       background-color: #F1F5F9;
+       color: #475569;
+       border: 1px solid #E2E8F0;
+   }
+ 
+   .feature-list {
+       margin-top: 20px;
+   }
+   .feature-icon {
+       width: 40px;
+       height: 40px;
+       background-color: #EEF2FF;
+       color: #4F46E5;
+       border-radius: 10px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       margin-right: 16px;
+       flex-shrink: 0;
+       font-size: 18px;
+   }
+   .feature-content h4 {
+       margin: 0 0 4px 0;
+       font-size: 18px;
+       color: #1E293B;
+       font-weight: 700;
+   }
+   .feature-content p {
+       margin: 0;
+       font-size: 14px;
+       color: #64748B;
+       line-height: 1.5;
+   }
+ 
+   .ai-card {
+       margin-top: auto;
+       background-color: #FFFFFF;
+       border: 1px solid #E2E8F0;
+       border-left: 4px solid #8B5CF6;
+       border-radius: 8px;
+       padding: 24px;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+   }
+   .ai-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: 12px;
+   }
+   .ai-label {
+       font-size: 12px;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       font-weight: 700;
+       color: #8B5CF6;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+   .ai-score-badge {
+       background-color: #F3E8FF;
+       color: #7C3AED;
+       padding: 4px 12px;
+       border-radius: 20px;
+       font-weight: 700;
+       font-size: 14px;
+   }
+   .ai-text {
+       font-size: 14px;
+       color: #475569;
+       font-style: italic;
+       line-height: 1.5;
+       margin-bottom: 12px;
+   }
+   .ai-recommendation {
+       font-size: 12px;
+       background-color: #FFFBEB;
+       color: #92400E;
+       padding: 8px 12px;
+       border-radius: 6px;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+ 
+   .note-bubble {
+       position: absolute;
+       background: #1E293B;
+       color: white;
+       padding: 2px 12px;
+       border-radius: 6px;
+       font-size: 12px;
+       font-weight: 600;
+       white-space: nowrap;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   }
+   
+   /* Slide 8 styles */
+   .pagination-wrapper {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       width: 100%;
+       color: #334155;
+       font-size: 14px;
+       font-weight: 500;
+   }
+   
+   .pagination-left {
+       display: flex;
+       align-items: center;
+       gap: 16px;
+   }
+ 
+   .rows-select {
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+   
+   .select-box {
+       border: 1px solid #CBD5E1;
+       border-radius: 6px;
+       padding: 6px 10px;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       background: #F8FAFC;
+       cursor: pointer;
+   }
+   
+   .pagination-right {
+       display: flex;
+       align-items: center;
+       gap: 8px;
+   }
+ 
+   .page-btn {
+       width: 32px;
+       height: 32px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       border: 1px solid #E2E8F0;
+       border-radius: 6px;
+       background: white;
+       color: #64748B;
+       cursor: pointer;
+       transition: all 0.2s;
+   }
+   
+   .page-btn:hover {
+       background: #F1F5F9;
+       color: #1E293B;
+   }
+ 
+   .page-btn.active {
+       background: #EEF2FF;
+       color: #4F46E5;
+       border-color: #4F46E5;
+       font-weight: 600;
+   }
+ 
+   .page-btn.disabled {
+       opacity: 0.5;
+       cursor: not-allowed;
+   }
+   
+   /* Slide 9 styles */
+   .checklist-col {
+       flex: 1.6;
+       display: flex;
+       flex-direction: column;
+       gap: 16px;
+   }
+   
+   .check-card {
+       display: flex;
+       align-items: center;
+       background-color: white;
+       border: 1px solid #E5E7EB;
+       padding: 16px 20px;
+       border-radius: 12px;
+       transition: all 0.2s ease;
+       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+   }
+   .check-card:hover {
+       transform: translateX(4px);
+       border-color: #4F46E5;
+       box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+   }
+   
+   .text-content {
+       flex: 1;
+   }
+   .card-title {
+       font-size: 16px;
+       font-weight: 700;
+       color: #1F2937;
+       margin-bottom: 2px;
+       display: block;
+   }
+   .card-desc {
+       font-size: 14px;
+       color: #6B7280;
+       margin: 0;
+   }
+   
+   .status-badge {
+       background-color: #DCFCE7;
+       color: #166534;
+       font-size: 11px;
+       font-weight: 700;
+       padding: 4px 8px;
+       border-radius: 6px;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       display: flex;
+       align-items: center;
+       gap: 4px;
+   }
+
+   .status-badge-yellow {
+       background-color: #defb24;
+       color: #948d0b;
+       font-size: 11px;
+       font-weight: 700;
+       padding: 4px 8px;
+       border-radius: 6px;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       display: flex;
+       align-items: center;
+       gap: 4px;
+   }
+ 
+   .score-col {
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+   }
+   
+   .score-card {
+       background-color: white;
+       border-radius: 16px;
+       border: 1px solid #E5E7EB;
+       padding: 40px 30px;
+       text-align: center;
+       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+       margin-bottom: 24px;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+   }
+   
+   .score-ring-container {
+       position: relative;
+       width: 160px;
+       height: 160px;
+       margin-bottom: 24px;
+   }
+   .score-text-overlay {
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 42px;
+       font-weight: 800;
+       color: #111827;
+   }
+   
+   .score-label {
+       font-size: 13px;
+       font-weight: 700;
+       color: #6B7280;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       margin-bottom: 16px;
+   }
+ 
+   .compliance-badge {
+       margin-top: auto;
+       background-color: #1F2937;
+       color: white;
+       padding: 16px;
+       border-radius: 12px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-weight: 600;
+       gap: 12px;
+       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   }
+   
+   .icon-contrast { background-color: #EEF2FF; color: #4F46E5; }
+   .icon-focus { background-color: #F3E8FF; color: #7C3AED; }
+   .icon-aria { background-color: #FFF7ED; color: #EA580C; }
+   .icon-color { background-color: #F0F9FF; color: #0284C7; }
+   .icon-touch { background-color: #FDF2F8; color: #DB2777; }
+   
+   /* Slide 10 styles */
+   .style-guide-card {
+       background: white;
+       border: 1px solid #E2E8F0;
+       border-radius: 12px;
+       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+       padding: 30px;
+       display: flex;
+       flex-direction: column;
+       gap: 24px;
+       position: relative;
+   }
+ 
+   .section-label {
+       font-size: 12px;
+       font-weight: 700;
+       color: #94A3B8;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       margin-bottom: 8px;
+   }
+   
+   .palette-row {
+       display: flex;
+       gap: 16px;
+       margin-bottom: 8px;
+   }
+   
+   .color-swatch {
+       width: 60px;
+       height: 60px;
+       border-radius: 12px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 10px;
+       color: white;
+       font-weight: 600;
+       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+   }
+   
+   .spacing-visual {
+       display: flex;
+       align-items: center;
+       gap: 4px;
+       background: #F8FAFC;
+       padding: 16px;
+       border-radius: 8px;
+       border: 1px dashed #CBD5E1;
+   }
+   .spacer-block {
+       height: 32px;
+       background-color: #E0E7FF;
+       border: 1px solid #C7D2FE;
+       border-radius: 4px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 10px;
+       color: #4338CA;
+       font-weight: 600;
+   }
+ 
+   .type-stack {
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+   }
+   .type-sample {
+       padding: 12px;
+       border-bottom: 1px solid #F1F5F9;
+   }
+   .type-h1 { font-size: 24px; font-weight: 800; color: #111827; line-height: 1.1; }
+   .type-body { font-size: 14px; color: #4B5563; line-height: 1.5; }
+ 
+   .ai-metric-row {
+       display: flex;
+       justify-content: space-between;
+       margin-bottom: 6px;
+       font-size: 13px;
+   }
+   .ai-metric-name { color: #64748B; }
+   .ai-metric-val { font-weight: 600; color: #1E293B; }
+</style>
+</head>
+<body>
+<div class="presentation-wrapper">
+   <!-- Slide Counter -->
+   <div class="slide-counter">
+       <span class="current-slide">1</span> / 15
+   </div>
+   
+   <!-- Slides Container -->
+   <div class="slides-container">
+       
+       <!-- SLIDE 1: Title -->
+       <div class="slide active" id="slide-1">
+           <div style="width: 100%; height: 100%; display: flex; position: relative; background-color: #ffffff;">
+               <div class="decorative-blob blob-1"></div>
+               <div class="decorative-blob blob-2"></div>
+               <div class="content-wrapper">
+                   <div>
+                       <div class="slide-tag">
+                           <p>Project Overview</p>
+                       </div>
+                   </div>
+                   <h1 class="main-title">
+                       Budget & WebOrder Tables
+                       <br/>
+                       <span class="highlight-text">UX/UI Design Review</span>
+                   </h1>
+                   <div class="divider"></div>
+                   <div class="feature-grid">
+                       <div class="feature-item">
+                           <div class="icon-box"><i class="fas fa-drafting-compass"></i></div>
+                           <p>Design rationale</p>
+                       </div>
+                       <div class="feature-item">
+                           <div class="icon-box"><i class="fas fa-sitemap"></i></div>
+                           <p>Structural decisions</p>
+                       </div>
+                       <div class="feature-item">
+                           <div class="icon-box"><i class="fas fa-stopwatch"></i></div>
+                           <p>Workflow optimization</p>
+                       </div>
+                       <div class="feature-item">
+                           <div class="icon-box"><i class="fas fa-universal-access"></i></div>
+                           <p>Accessibility considerations</p>
+                       </div>
+                       <div class="feature-item">
+                           <div class="icon-box"><i class="fas fa-robot"></i></div>
+                           <p>AI-based UX evaluation</p>
+                       </div>
+                   </div>
+                   <div class="meta-footer">
+                       <p><i class="far fa-calendar-alt" style="margin-right: 8px; justify-content: bottom;"></i>January 2026</p>
+                       <p><i class="fas fa-layer-group" style="margin-right: 8px; justify-content: bottom;"></i>Interactive Prototype Included</p>
+                   </div>
+               </div>
+               <div class="visual-accent">
+                   <div class="grid-pattern"></div>
+                   <div class="prototype-card">
+                       <div class="card-header"></div>
+                       <div class="card-row"></div>
+                       <div class="card-row medium"></div>
+                       <div class="card-row short"></div>
+                       <div class="card-row"></div>
+                       <!-- <div class="card-btn">
+                           <p>View Prototype</p>
+                       </div> -->
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 2: Project Goal -->
+       <div class="slide" id="slide-2">
+           <div style="width: 100%; height: 100%; display: flex; position: relative; background-color: #ffffff;">
+               <div class="accent-bar"></div>
+               <div class="bg-pattern"></div>
+               <div style="display: flex; flex-direction: column; padding: 50px 80px 120px 80px; width: 100%; z-index: 10;">
+                   <div class="header-section">
+                       <div class="slide-tag">Project Goal</div>
+                       <h1 class="slide-title">Project Goal</h1>
+                       <p class="slide-subtitle">Designing a system that balances operational efficiency with data clarity.</p>
+                   </div>
+                   <div class="columns-container">
+                       <div class="col-left">
+                           <div class="section-title">
+                               <i class="fas fa-bullseye"></i>
+                               <span>Primary Objectives</span>
+                           </div>
+                           <ul class="objective-list">
+                               <li class="objective-item">
+                                   <div class="check-icon"><i class="fas fa-check"></i></div>
+                                   <span class="objective-text">High-volume data processing (100+ entries)</span>
+                               </li>
+                               <li class="objective-item">
+                                   <div class="check-icon"><i class="fas fa-check"></i></div>
+                                   <span class="objective-text">Fast decision-making workflows</span>
+                               </li>
+                               <li class="objective-item">
+                                   <div class="check-icon"><i class="fas fa-check"></i></div>
+                                   <span class="objective-text">Error prevention & validation systems</span>
+                               </li>
+                               <li class="objective-item">
+                                   <div class="check-icon"><i class="fas fa-check"></i></div>
+                                   <span class="objective-text">Cross-device usability (desktop, tablet, mobile)</span>
+                               </li>
+                           </ul>
+                           <div class="bottom-note">
+                               <p>Design prioritizes efficiency and clarity over decorative UI elements.</p>
+                           </div>
+                       </div>
+                       <div class="col-right">
+                           <div class="section-title">
+                               <i class="fas fa-users"></i>
+                               <span>Target Users</span>
+                           </div>
+                           <div class="user-card">
+                               <div class="user-icon"><i class="fas fa-calculator"></i></div>
+                               <div class="user-info">
+                                   <span class="user-role">Accountants</span>
+                                   <span class="user-desc">Heavy data entry & reconciliation</span>
+                               </div>
+                           </div>
+                           <div class="user-card">
+                               <div class="user-icon"><i class="fas fa-briefcase"></i></div>
+                               <div class="user-info">
+                                   <span class="user-role">Budget Holders</span>
+                                   <span class="user-desc">Approval & budget tracking</span>
+                               </div>
+                           </div>
+                           <div class="user-card">
+                               <div class="user-icon"><i class="fas fa-clipboard-check"></i></div>
+                               <div class="user-info">
+                                   <span class="user-role">Operational Reviewers</span>
+                                   <span class="user-desc">Process compliance checks</span>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 3: User Workflow -->
+       <div class="slide" id="slide-3">
+        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                           <div class="bg-grid"></div>
+               <div class="header">
+                   <span class="tag">Design Foundation</span>
+                   <h1 class="title">User Workflow</h1>
+                   <p class="subtitle">Designed around real usage patterns to support high-speed processing.</p>
+               </div>
+               <div class="workflow-container">
+                   <div class="connection-line"></div>
+                   <div class="step-card">
+                       <div class="icon-wrapper">
+                           <div class="step-number">1</div>
+                           <i class="fas fa-filter icon"></i>
+                       </div>
+                       <div class="step-title">Apply Filters</div>
+                       <div class="step-desc">Refine dataset by Status, Date, or Category</div>
+                   </div>
+                   <div class="step-card">
+                       <div class="icon-wrapper">
+                           <div class="step-number">2</div>
+                           <i class="fas fa-list-ul icon"></i>
+                       </div>
+                       <div class="step-title">Scan Entries</div>
+                       <div class="step-desc">Quick vertical scanning of high-level data</div>
+                   </div>
+                   <div class="step-card">
+                       <div class="icon-wrapper">
+                           <div class="step-number">3</div>
+                           <i class="fas fa-expand-alt icon"></i>
+                       </div>
+                       <div class="step-title">Open Details</div>
+                       <div class="step-desc">Expand row for granular information context</div>
+                   </div>
+                   <div class="step-card">
+                       <div class="icon-wrapper">
+                           <div class="step-number">4</div>
+                           <i class="fas fa-check-double icon"></i>
+                       </div>
+                       <div class="step-title">Action</div>
+                       <div class="step-desc">Approve, Reject, or Download Document</div>
+                   </div>
+                   <div class="step-card">
+                       <div class="icon-wrapper">
+                           <div class="step-number">5</div>
+                           <i class="fas fa-forward icon"></i>
+                       </div>
+                       <div class="step-title">Next Entry</div>
+                       <div class="step-desc">Automatically advance to next record</div>
+                   </div>
+               </div>
+               <div class="logic-statement">
+                   <p><i class="fas fa-info-circle" style="margin-right: 8px; color: #9CA3AF;"></i>The entire structure supports <strong>sequential processing</strong> without losing context.</p>
+               </div>
+               <div class="ai-box">
+                   <div class="ai-icon">
+                       <i class="fas fa-robot"></i>
+                   </div>
+                   <div class="ai-content">
+                       <h4>AI UX Audit Note</h4>
+                       <p>"The workflow alignment is consistent with enterprise SaaS patterns used in financial systems."</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 4: Key Architectural Decision -->
+       <div class="slide" id="slide-4">
+           <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+               <div class="bg-blob"></div>
+               <div class="header" style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
+                   <div style="flex: 1;">
+                       <span class="tag">Architecture</span>
+                       <h1 class="title">Key Architectural Decision</h1>
+                       <p class="subtitle">Comparing interaction models for detailed data review.</p>
+                   </div>
+               </div>
+               <div class="comparison-wrapper">
+                   <div class="col-card winning">
+                       <div class="badge">Selected Approach</div>
+                       <div class="col-header">
+                           <div class="col-icon"><i class="fas fa-chevron-down"></i></div>
+                           <span class="col-title">Expandable Dropdown Rows</span>
+                       </div>
+                       <div class="img-placeholder" style="margin-bottom: 52px;">
+                            <div class="mockup-content">
+                                <img src="Group 49.jpg" alt="Table header" style="width: 100%; height: auto; display: block;">
+                            </div>
+                       </div>
+                       <div class="list-group">
+                           <div class="list-item">
+                               <i class="fas fa-check list-icon"></i>
+                               <p><strong>Preserves context:</strong> User stays within the table flow</p>
+                           </div>
+                           <div class="list-item">
+                               <i class="fas fa-check list-icon"></i>
+                               <p><strong>Full width usage:</strong> Maximizes screen real estate for data</p>
+                           </div>
+                           <div class="list-item">
+                               <i class="fas fa-check list-icon"></i>
+                               <p><strong>Ergonomic:</strong> Avoids horizontal eye movement fatigue</p>
+                           </div>
+                           <div class="list-item">
+                               <i class="fas fa-check list-icon"></i>
+                               <p><strong>Speed:</strong> Supports faster sequential review (Down arrow navigation)</p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-card losing">
+                       <div class="col-header">
+                           <div class="col-icon"><i class="fas fa-columns"></i></div>
+                           <span class="col-title">Sidebar / Drawer Panel</span>
+                       </div>
+                       <div class="img-placeholder" style="margin-bottom: 56px;">
+                           <div style="text-align:center">
+                                <div class="mockup-content">
+                                    <img src="Budget table sidebar-2.jpg" alt="Table header" style="width: 100%; height: auto; display: block;">
+                                </div>
+                           </div>
+                       </div>
+                       <div class="list-group">
+                           <div class="list-item">
+                               <i class="fas fa-times list-icon"></i>
+                               <p><strong>Reduced width:</strong> Compresses main table columns (30-40% loss)</p>
+                           </div>
+                           <div class="list-item">
+                               <i class="fas fa-times list-icon"></i>
+                               <p><strong>Breaks flow:</strong> Vertical scanning interrupted by side-look</p>
+                           </div>
+                           <div class="list-item">
+                               <i class="fas fa-times list-icon"></i>
+                               <p><strong>Visual gap:</strong> Creates separation from selected row data</p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="ai-score-card">
+                       <div class="score-circle">10</div>
+                       <div class="score-text">
+                           <h4>AI Evaluation</h4>
+                           <p>Top score for contextual workflow efficiency & screen optimization.</p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 5: Table Structure -->
+       <div class="slide" id="slide-5">
+        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                           <div class="bg-circle"></div>
+               <div class="header" style="margin-bottom: 30px;">
+                   <span class="tag">Table Structure</span>
+                   <h1 class="title">Table Structure & Column Logic</h1>
+               </div>
+               <div style="display: flex; gap: 50px; flex: 1; position: relative; z-index: 10; height: 100%;">
+                   <div class="visual-col">
+                       <div class="screenshot-placeholder">
+                            <div class="mockup-content">
+                                <img src="THEAD.svg" alt="Table header" style="width: 100%; height: auto; display: block;">
+                            </div>
+                        
+                           <div class="group-indicator gi-left"></div>
+                           <div class="group-indicator gi-center"></div>
+                           <div class="group-indicator gi-right"></div>
+                       </div>
+                       <div class="flow-strip">
+                           <div class="flow-item"><span>ID</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Date</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>School</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Type</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Quantity</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Status</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Invoice</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Amount</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span style="font-weight: 700; color: #4F46E5;">Actions</span></div>
+                       </div>
+                   </div>
+                   <div class="info-col">
+                       <div class="logic-section">
+                           <div class="section-header">
+                               <i class="fas fa-layer-group"></i>
+                               <span>Design Logic</span>
+                           </div>
+                           <div class="logic-list">
+                               <div class="logic-item">
+                                   <span class="logic-badge badge-left">Left</span>
+                                   <span class="logic-text"><strong>Identification:</strong> Fixed references for quick lookup (ID, Date)</span>
+                               </div>
+                               <div class="logic-item">
+                                   <span class="logic-badge badge-center">Center</span>
+                                   <span class="logic-text"><strong>Context:</strong> Variable data for evaluation (School, Type, Status)</span>
+                               </div>
+                               <div class="logic-item">
+                                   <span class="logic-badge badge-right">Right</span>
+                                   <span class="logic-text"><strong>Decision:</strong> Financial impact & final actions (Amount, Approve)</span>
+                               </div>
+                               <div class="logic-item" style="border-left: 3px solid #F59E0B;">
+                                   <span class="logic-badge" style="background-color: #FEF3C7; color: #B45309;">Flow</span>
+                                   <span class="logic-text">Actions placed last to avoid reading interruption</span>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="ai-assessment">
+                           <div class="ai-badge">AI Assessment</div>
+                           <div class="ai-score">
+                               <span class="score-big">10</span>
+                               <span class="score-total">/ 10</span>
+                           </div>
+                           <p class="ai-note">
+                               "Column hierarchy follows established enterprise table patterns (Salesforce/Stripe-style logic). Excellent logical sequencing for operational efficiency."
+                           </p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 6: Filter Strategy -->
+       <div class="slide" id="slide-6">
+           <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 50px 80px;">
+               <div class="bg-circle"></div>
+               <div class="header" style="margin-bottom: 30px;">
+                   <span class="tag">Filter Strategy</span>
+                   <h1 class="title">Filter Strategy & Order</h1>
+               </div>
+               <div style="display: flex; gap: 50px; flex: 1; position: relative; z-index: 10; height: 100%;">
+                   <div class="visual-col">
+                       <div class="screenshot-placeholder">
+                        <div class="mockup-content">
+                            <img src="status.jpg" alt="Status panel" style="width: 100%; height: auto; display: block;">
+                        </div>
+                        
+                       </div>
+                       <div class="flow-strip">
+                           <div class="flow-item"><span style="font-weight: 700; color: #4F46E5;">Status</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>School Type</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Date From</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Date To</span><i class="fas fa-chevron-right flow-arrow"></i></div>
+                           <div class="flow-item"><span>Search</span></div>
+                       </div>
+                   </div>
+                   <div class="info-col">
+                       <div class="logic-section">
+                           <div class="section-header">
+                               <i class="fas fa-sort-amount-down"></i>
+                               <span>Design Reasoning</span>
+                           </div>
+                           <div class="logic-list">
+                               <div class="logic-item">
+                                   <span class="logic-badge">1</span>
+                                   <span class="logic-text"><strong>Most Important First:</strong> "Status" is the primary decision driver.</span>
+                               </div>
+                               <div class="logic-item">
+                                   <span class="logic-badge">2</span>
+                                   <span class="logic-text"><strong>Broad to Specific:</strong> Category filters placed before time ranges.</span>
+                               </div>
+                               <div class="logic-item">
+                                   <span class="logic-badge">3</span>
+                                   <span class="logic-text"><strong>Natural Flow:</strong> Increasing specificity from left to right mirrors mental model.</span>
+                               </div>
+                               <div class="logic-item">
+                                   <span class="logic-badge">4</span>
+                                   <span class="logic-text"><strong>Fallback:</strong> Free text "Search" is the final refinement step.</span>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="ai-assessment">
+                           <div class="ai-badge">AI Assessment</div>
+                           <div class="ai-score">
+                               <span class="score-big">9.5</span>
+                               <span class="score-total">/ 10</span>
+                           </div>
+                           <p class="ai-note">
+                               "Filter hierarchy is rated highly for cognitive flow alignment and prioritization clarity. It matches natural decision refinement behavior."
+                           </p>
+                           <div class="optional-note">
+                               <p><i class="fas fa-lightbulb" style="color: #EAB308; margin-right: 8px;"></i><strong>Optional Improvement:</strong> Add active filter counter (e.g., "2 active filters") for better visibility.</p>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 7: Context-Aware Actions -->
+       <div class="slide" id="slide-7">
+           <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+               <div class="bg-shape"></div>
+               <div class="header" style="margin-bottom: 40px;">
+                   <span class="tag">Workflow Optimization</span>
+                   <h1 class="title">Context-Aware Actions</h1>
+                   <p class="subtitle">Dynamic interface elements that adapt to data status.</p>
+               </div>
+               <div style="display: flex; gap: 60px; flex: 1; position: relative; z-index: 10;">
+                   <div style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+                       <div class="mockup-container">
+                           <div class="table-row">
+                               <div class="col-info">
+                                   <p class="text-sm">Budget Request #2024-089</p>
+                                   <p class="text-xs">Office Supplies - Q1</p>
+                               </div>
+                               <div class="col-status">
+                                   <span class="badge-pending">Pending</span>
+                               </div>
+                               <div class="col-actions">
+                                   <button class="btn btn-approve">
+                                       <i class="fas fa-check"></i> Approve
+                                   </button>
+                                   <button class="btn btn-reject">
+                                       <i class="fas fa-times"></i> Reject
+                                   </button>
+                               </div>
+                           </div>
+                           <div class="table-row">
+                               <div class="col-info">
+                                   <p class="text-sm">Budget Request #2024-088</p>
+                                   <p class="text-xs">Software License Renewal</p>
+                               </div>
+                               <div class="col-status">
+                                   <span class="badge-paid">Paid</span>
+                               </div>
+                               <div class="col-actions">
+                                   <button class="btn btn-download">
+                                       <i class="fas fa-download"></i> Invoice
+                                   </button>
+                               </div>
+                           </div>
+                           <div class="table-row">
+                               <div class="col-info">
+                                   <p class="text-sm">Budget Request #2024-087</p>
+                                   <p class="text-xs">Team Building Event</p>
+                               </div>
+                               <div class="col-status">
+                                   <span class="badge-pending">Pending</span>
+                               </div>
+                               <div class="col-actions">
+                                   <button class="btn btn-approve">
+                                       <i class="fas fa-check"></i> Approve
+                                   </button>
+                                   <button class="btn btn-reject">
+                                       <i class="fas fa-times"></i> Reject
+                                   </button>
+                               </div>
+                           </div>
+                           <div class="note-bubble" style="top: 25px; right: -15px; transform: translateX(100%);">
+                               <i class="fas fa-arrow-left" style="margin-right: 4px;"></i> Critical Actions
+                           </div>
+                           <div class="note-bubble" style="top: 95px; right: -15px; transform: translateX(100%);">
+                               <i class="fas fa-arrow-left" style="margin-right: 4px;"></i> Safe Actions
+                           </div>
+                       </div>
+                   </div>
+                   <div class="info-col">
+                       <div class="feature-list">
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-filter"></i></div>
+                               <div class="feature-content">
+                                   <h4>Relevance Only</h4>
+                                   <p>Interface hides impossible actions (e.g., cannot "Approve" an already paid item), reducing clutter.</p>
+                               </div>
+                           </div>
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                               <div class="feature-content">
+                                   <h4>Reduced Cognitive Load</h4>
+                                   <p>Decision-making is simplified by presenting only valid next steps.</p>
+                               </div>
+                           </div>
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                               <div class="feature-content">
+                                   <h4>Semantic Color Mapping</h4>
+                                   <p>Green for positive progression, Red for stopping, Neutral for information retrieval.</p>
+                               </div>
+                           </div>
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-mouse-pointer"></i></div>
+                               <div class="feature-content">
+                                   <h4>1-Click Execution</h4>
+                                   <p>High-frequency actions are exposed directly, avoiding nested menus.</p>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="ai-card">
+                           <div class="ai-header">
+                               <div class="ai-label"><i class="fas fa-robot"></i> AI Assessment</div>
+                               <div class="ai-score-badge">8.5 / 10</div>
+                           </div>
+                           <div class="ai-text">
+                               <p>"Contextual action logic significantly improves efficiency. The dynamic change of interface elements aligns with the mental model of the user state."</p>
+                           </div>
+                           <div class="ai-recommendation">
+                               <i class="fas fa-lightbulb"></i>
+                               <span>Recommendation: Add tooltips and confirmation dialogs for destructive actions like 'Reject'.</span>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 8: Pagination -->
+       <div class="slide" id="slide-8">
+           <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+               <div class="bg-shape"></div>
+               <div class="header" style="margin-bottom: 40px;">
+                   <span class="tag">Data Volume Handling</span>
+                   <h1 class="title">Pagination & Data Volume</h1>
+                   <p class="subtitle">Efficient navigation for high-volume datasets.</p>
+               </div>
+               <div style="display: flex; gap: 60px; flex: 1; position: relative; z-index: 10;">
+                   <div style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+                       <div class="mockup-container" style="min-height: 200px;">
+                           <div class="pagination-wrapper">
+                               <div class="pagination-left">
+                                   <div class="rows-select">
+                                       <span style="font-size: 14px; color: #64748B;">Rows per page:</span>
+                                       <div class="select-box">
+                                           <span>50</span>
+                                           <i class="fas fa-chevron-down" style="font-size: 10px; color: #9CA3AF;"></i>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="pagination-right">
+                                   <div class="page-btn disabled" title="First Page">
+                                       <i class="fas fa-angle-double-left"></i>
+                                   </div>
+                                   <div class="page-btn disabled" title="Previous Page">
+                                       <i class="fas fa-chevron-left"></i>
+                                   </div>
+                                   <div class="page-btn active">1</div>
+                                   <div class="page-btn">2</div>
+                                   <div class="page-btn">3</div>
+                                   <div class="page-btn">...</div>
+                                   <div class="page-btn">25</div>
+                                   <div class="page-btn" title="Next Page">
+                                       <i class="fas fa-chevron-right"></i>
+                                   </div>
+                                   <div class="page-btn" title="Last Page">
+                                       <i class="fas fa-angle-double-right"></i>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="note-bubble" style="bottom: -15px; left: 20px; z-index: 20;">
+                               <i class="fas fa-arrow-up" style="margin-right: 4px;"></i> Flexible Density Control
+                           </div>
+                           <div class="note-bubble" style="top: -15px; right: 20px; z-index: 20;">
+                               <i class="fas fa-arrow-down" style="margin-right: 4px;"></i> Full Range Navigation
+                           </div>
+                       </div>
+                       <div style="margin-top: 32px; background: white; border-radius: 12px; padding: 24px; border: 1px solid #E2E8F0;">
+                           <h3 style="font-size: 16px; font-weight: 700; color: #1E293B; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                               <i class="fas fa-users" style="color: #6366F1;"></i> Designed For
+                           </h3>
+                           <div style="display: flex; gap: 16px;">
+                               <div style="flex: 1; background: #F8FAFC; padding: 12px; border-radius: 8px; text-align: center;">
+                                   <i class="fas fa-database" style="font-size: 20px; color: #94A3B8; margin-bottom: 8px;"></i>
+                                   <p style="margin: 0; font-size: 13px; font-weight: 600; color: #334155;">Large Datasets</p>
+                               </div>
+                               <div style="flex: 1; background: #F8FAFC; padding: 12px; border-radius: 8px; text-align: center;">
+                                   <i class="fas fa-bolt" style="font-size: 20px; color: #94A3B8; margin-bottom: 8px;"></i>
+                                   <p style="margin: 0; font-size: 13px; font-weight: 600; color: #334155;">Power Users</p>
+                               </div>
+                               <div style="flex: 1; background: #F8FAFC; padding: 12px; border-radius: 8px; text-align: center;">
+                                   <i class="fas fa-eye" style="font-size: 20px; color: #94A3B8; margin-bottom: 8px;"></i>
+                                   <p style="margin: 0; font-size: 13px; font-weight: 600; color: #334155;">Flexible Scanning</p>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="info-col">
+                       <div class="feature-list">
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-list-ol"></i></div>
+                               <div class="feature-content">
+                                   <h4>Total Context</h4>
+                                   <p>Always displays current range and total count so users know exactly where they are in the dataset.</p>
+                               </div>
+                           </div>
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-sliders-h"></i></div>
+                               <div class="feature-content">
+                                   <h4>Adjustable Density</h4>
+                                   <p>Rows per page options (50/100/200) cater to different screen sizes and user preferences.</p>
+                               </div>
+                           </div>
+                           <div class="feature-item">
+                               <div class="feature-icon"><i class="fas fa-step-forward"></i></div>
+                               <div class="feature-content">
+                                   <h4>Complete Navigation Control</h4>
+                                   <p>Includes First, Previous, Next, Last, and direct page access for rapid traversing.</p>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="ai-card" style="border-left-color: #10B981;">
+                           <div class="ai-header">
+                               <div class="ai-label" style="color: #10B981;"><i class="fas fa-robot"></i> AI Assessment</div>
+                               <div class="ai-score-badge" style="background-color: #ECFDF5; color: #047857;">10 / 10</div>
+                           </div>
+                           <div class="ai-text">
+                               <p>"The pagination implementation is flawless. It offers complete control without overwhelming the interface, scoring 10/10 for completeness and enterprise-readiness."</p>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <!-- SLIDE 9: Accessibility -->
+<div class="slide" id="slide-9">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+        <div class="bg-side-panel"></div>
+        <div class="header" style="margin-bottom: 40px;">
+            <span class="tag">Compliance &amp; Inclusivity</span>
+            <h1 class="title">Accessibility Considerations</h1>
+        </div>
+        <div style="display: flex; gap: 60px; flex: 1; position: relative; z-index: 10; height: 100%;">
+            <div class="checklist-col">
+                <div class="check-card">
+                    <div class="icon-box icon-contrast"><i class="fas fa-adjust"></i></div>
+                    <div class="text-content">
+                        <span class="card-title">Strong Color Contrast</span>
+                        <p class="card-desc">Meets WCAG AA standards for text readability and UI elements.</p>
+                    </div>
+                    <div class="status-badge-yellow"><i class="fas fa-check"></i> AA</div>
+                </div>
+                <div class="check-card">
+                    <div class="icon-box icon-focus"><i class="fas fa-keyboard"></i></div>
+                    <div class="text-content">
+                        <span class="card-title">Keyboard Navigation</span>
+                        <p class="card-desc">Clear, high-visibility focus states for all interactive elements.</p>
+                    </div>
+                    <div class="status-badge"><i class="fas fa-check"></i> Ready</div>
+                </div>
+                <div class="check-card">
+                    <div class="icon-box icon-aria"><i class="fas fa-universal-access"></i></div>
+                    <div class="text-content">
+                        <span class="card-title">Screen Reader Support</span>
+                        <p class="card-desc">ARIA labels implemented for all icon-only buttons.</p>
+                    </div>
+                    <div class="status-badge"><i class="fas fa-check"></i> ARIA</div>
+                </div>
+                <div class="check-card">
+                    <div class="icon-box icon-color"><i class="fas fa-eye-slash"></i></div>
+                    <div class="text-content">
+                        <span class="card-title">Visual Independence</span>
+                        <p class="card-desc">Status differentiation uses shape and text, not solely color.</p>
+                    </div>
+                    <div class="status-badge"><i class="fas fa-check"></i> Pass</div>
+                </div>
+                <div class="check-card">
+                    <div class="icon-box icon-touch"><i class="fas fa-fingerprint"></i></div>
+                    <div class="text-content">
+                        <span class="card-title">Touch Targets</span>
+                        <p class="card-desc">Expanded click areas (min 44px) for tablet and mobile users.</p>
+                    </div>
+                    <div class="status-badge"><i class="fas fa-check"></i> Touch</div>
+                </div>
+            </div>
+            <div class="score-col">
+                <div class="score-card">
+                    <div class="score-label">AI Accessibility Score</div>
+                    <div class="score-ring-container">
+                        <svg height="160" viewBox="0 0 160 160" width="160">
+                            <circle cx="80" cy="80" fill="none" r="70" stroke="#F3F4F6" stroke-width="12"></circle>
+                            <circle cx="80" cy="80" fill="none" r="70" stroke="#4F46E5" stroke-dasharray="352 440" stroke-linecap="round" stroke-width="12" transform="rotate(-90 80 80)"></circle>
+                        </svg>
+                        <div class="score-text-overlay">9/10</div>
+                    </div>
+                    <p class="ai-note">"High foundation established. Minor enhancements recommended for complex modal interactions."</p>
+                </div>
+                <div class="compliance-badge">
+                    <i class="fas fa-certificate" style="color: #FBBF24; font-size: 20px;"></i>
+                    <span>WCAG 2.1 Compliant</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Visual System -->
+<div class="slide" id="slide-10">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+        <div class="bg-shape"></div>
+        <div class="header" style="margin-bottom: 40px;">
+            <span class="tag">Design System</span>
+            <h1 class="title">Visual System & Consistency</h1>
+            <p class="subtitle">Standardized visual language for scale and clarity.</p>
+        </div>
+        <div style="display: flex; gap: 60px; flex: 1; position: relative; z-index: 10;">
+            <div style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+                <div class="style-guide-card">
+                    <div>
+                        <div class="section-label">Interactive & Semantic Colors</div>
+                        <div class="palette-row">
+                            <div class="color-swatch" style="background-color: #00ACEC;">Primary</div>
+                            <div class="color-swatch" style="background-color: #10B981;">Success</div>
+                            <div class="color-swatch" style="background-color: #F59E0B;">Warning</div>
+                            <div class="color-swatch" style="background-color: #EF4444;">Danger</div>
+                            <div class="color-swatch" style="background-color: #64748B;">Neutral</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-label">8px Spacing Grid</div>
+                        <div class="spacing-visual">
+                            <div class="spacer-block" style="width: 8px;">8</div>
+                            <div class="spacer-block" style="width: 16px;">16</div>
+                            <div class="spacer-block" style="width: 24px;">24</div>
+                            <div class="spacer-block" style="width: 32px;">32</div>
+                            <div class="spacer-block" style="width: 48px;">48</div>
+                            <div class="spacer-block" style="width: 64px;">64</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-label">System Font Stack (Inter/SF Pro)</div>
+                        <div class="type-stack">
+                            <div class="type-sample">
+                                <div class="type-h1">Heading 1 - Bold 800</div>
+                            </div>
+                            <div class="type-sample">
+                                <div class="type-body">Body Text - Regular 400. Optimized for legibility at small sizes.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="note-bubble" style="top: 35px; right: -15px; transform: translateX(50%);">
+                        <i class="fas fa-arrow-left" style="margin-right: 4px;"></i> Unified Interaction
+                    </div>
+                    <div class="note-bubble" style="top: 150px; right: -15px; transform: translateX(50%);">
+                        <i class="fas fa-arrow-left" style="margin-right: 4px;"></i> Consistent Rhythm
+                    </div>
+                </div>
+            </div>
+            <div class="info-col">
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-swatchbook"></i></div>
+                        <div class="feature-content">
+                            <h4>Single Interactive Color</h4>
+                            <p>One primary blue (#4F46E5) is used exclusively for interactive elements.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-ruler-combined"></i></div>
+                        <div class="feature-content">
+                            <h4>8px Spacing System</h4>
+                            <p>All margins and paddings are multiples of 8, creating predictable rhythm.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-vector-square"></i></div>
+                        <div class="feature-content">
+                            <h4>Unified States</h4>
+                            <p>Hover, active, and focus states share consistent logic across components.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="feature-content">
+                            <h4>System Font Stack</h4>
+                            <p>Uses native fonts for zero-latency rendering.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-card" style="border-left-color: #10B981;">
+                    <div class="ai-header">
+                        <div class="ai-label" style="color: #10B981;"><i class="fas fa-robot"></i> AI Assessment</div>
+                        <div class="ai-score-badge" style="background-color: #ECFDF5; color: #047857;">10 / 10</div>
+                    </div>
+                    <div class="ai-text">
+                        <p>"The visual system exhibits excellent rigor. Spacing and typography significantly contribute to scannability."</p>
+                    </div>
+                    <div class="ai-metric-row">
+                        <span class="ai-metric-name">Visual Consistency & Spacing</span>
+                        <span class="ai-metric-val">10/10</span>
+                    </div>
+                    <div class="ai-metric-row">
+                        <span class="ai-metric-name">Typography (Hierarchy)</span>
+                        <span class="ai-metric-val">10/10</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: Responsive Strategy -->
+<div class="slide" id="slide-11">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 300px; background-color: #F8FAFC; z-index: 0; transform: skewY(-2deg); transform-origin: bottom right;"></div>
+        <div class="header" style="margin-bottom: 50px; text-align: center; position: relative; z-index: 10;">
+            <span class="tag">Responsive Strategy</span>
+            <h1 class="title">Cross-Device Consistency</h1>
+            <p class="subtitle">Goal: <strong style="color: #4F46E5; font-weight: 600;">Same logic, adapted layout.</strong> Ensuring seamless transitions.</p>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: flex-end; gap: 30px; position: relative; z-index: 10; flex: 1; padding-bottom: 40px;">
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 320px;">
+                <div style="width: 320px; height: 200px; border-radius: 8px; border: 8px solid #1F2937; background-color: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); margin-bottom: 30px; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div style="background-color: #F9FAFB; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;">
+                        <i class="fas fa-desktop" style="font-size: 32px; color: #9CA3AF;"></i>
+                    </div>
+                </div>
+                <div style="font-size: 20px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-desktop" style="color: #4F46E5; font-size: 16px;"></i> Desktop
+                </div>
+                <div style="background-color: white; padding: 16px; border-radius: 8px; border: 1px solid #F3F4F6; width: 100%;">
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Maximale data density</p>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Full column visibility</p>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 240px; display: flex; align-items: center; font-size: 24px; color: #D1D5DB; padding-bottom: 20px;">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 320px;">
+                <div style="width: 180px; height: 240px; border-radius: 12px; border: 8px solid #374151; background-color: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); margin-bottom: 30px; display: flex; align-items: center; justify-content: center;">
+                    <div style="background-color: #F9FAFB; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-tablet-alt" style="font-size: 32px; color: #9CA3AF;"></i>
+                    </div>
+                </div>
+                <div style="font-size: 20px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-tablet-alt" style="color: #4F46E5; font-size: 16px;"></i> Tablet
+                </div>
+                <div style="background-color: white; padding: 16px; border-radius: 8px; border: 1px solid #F3F4F6; width: 100%;">
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Preserved structure</p>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Adjusted column widths</p>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 240px; display: flex; align-items: center; font-size: 24px; color: #D1D5DB; padding-bottom: 20px;">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 320px;">
+                <div style="width: 120px; height: 240px; border-radius: 16px; border: 6px solid #1F2937; background-color: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); margin-bottom: 30px; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div style="background-color: #F9FAFB; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-mobile-alt" style="font-size: 28px; color: #9CA3AF;"></i>
+                    </div>
+                </div>
+                <div style="font-size: 20px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-mobile-alt" style="color: #4F46E5; font-size: 16px;"></i> Mobile
+                </div>
+                <div style="background-color: white; padding: 16px; border-radius: 8px; border: 1px solid #F3F4F6; width: 100%;">
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Priority-based display</p>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Simplified interaction</p>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; font-size: 14px; color: #4B5563;">
+                        <i class="fas fa-circle" style="color: #4F46E5; margin-right: 8px; margin-top: 5px; font-size: 8px;"></i>
+                        <p style="margin: 0;">Maintained workflow</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: AI UX Audit Summary -->
+<div class="slide" id="slide-12">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                <div style="position: absolute; top: 0; right: 0; width: 100%; height: 8px; background-color: #4F46E5; z-index: 20;"></div>
+        <div class="bg-blob"></div>
+        <div class="header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10;">
+            <div>
+                <span class="tag">Evaluation</span>
+                <h1 class="title">AI UX Audit Summary</h1>
+            </div>
+            <div style="text-align: right; align-self: flex-end;">
+                <p style="color: #6B7280; margin: 0; font-size: 13px; font-weight: 600; text-transform: uppercase;">Analysis Scope</p>
+                <p style="color: #111827; margin: 4px 0 0 0; font-size: 20px; font-weight: 700;">7 Core Categories</p>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 360px 1fr; gap: 40px; position: relative; z-index: 10; height: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 32px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; flex: 1; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background-color: #4F46E5;"></div>
+                    <div style="display: flex; align-items: baseline; margin-bottom: 8px;">
+                        <span style="font-size: 84px; font-weight: 800; color: #1F2937; line-height: 1;">9.5</span>
+                        <span style="font-size: 24px; color: #9CA3AF; font-weight: 500; margin-left: 4px;">/ 10</span>
+                    </div>
+                    <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #6B7280; font-weight: 700; margin-top: 8px;">Overall Performance</div>
+                    <div style="margin-top: 20px; background-color: #DCFCE7; color: #166534; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-check-circle"></i> Excellent
+                    </div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 15px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <i class="fas fa-tasks" style="color: #6366F1;"></i> Priority Actions
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="display: flex; align-items: start; gap: 12px; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
+                            <i class="fas fa-exclamation-triangle" style="color: #F59E0B; margin-top: 2px;"></i>
+                            <p style="margin: 0;">Add confirmations for destructive actions</p>
+                        </li>
+                        <li style="display: flex; align-items: start; gap: 12px; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
+                            <i class="fas fa-info-circle" style="color: #3B82F6; margin-top: 2px;"></i>
+                            <p style="margin: 0;">Add tooltips for data clarity</p>
+                        </li>
+                        <li style="display: flex; align-items: start; gap: 12px; font-size: 14px; color: #4B5563;">
+                            <i class="fas fa-keyboard" style="color: #8B5CF6; margin-top: 2px;"></i>
+                            <p style="margin: 0;">Strengthen keyboard navigation</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-content: start;">
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Architecture</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-10" style="width: 100%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-10">10/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Pagination</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-10" style="width: 100%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-10">10/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Spacing & Consistency</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-10" style="width: 100%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-10">10/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Table Structure</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-9" style="width: 95%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-9">10/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Filters Strategy</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-9" style="width: 95%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-9">9.5/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Context Actions</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-8" style="width: 85%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-8">9.5/10</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <span class="metric-name">Accessibility</span>
+                        <div class="metric-bar-bg"><div class="metric-bar-fill bg-8" style="width: 80%;"></div></div>
+                    </div>
+                    <span class="metric-value theme-8">9.0/10</span>
+                </div>
+                <div style="grid-column: span 1; background-color: #F0FDFA; border: 1px dashed #99F6E4; display: flex; align-items: center; justify-content: center; padding: 20px; border-radius: 12px; height: 85px;">
+                    <p style="font-size: 13px; color: #115E59; font-style: italic; text-align: center; margin: 0;">"Category breakdown indicates a highly robust system with minor interaction refinements needed."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: Business Impact -->
+<div class="slide" id="slide-13">
+    <div style="width: 100%; height: 200%; display: flex; position: relative; background-color: #ffffff; ">
+        <div class="accent-bar"></div>
+        <div class="bg-pattern"></div>
+        <div style="display: flex; flex-direction: column; padding: 50px 80px 120px 80px; width: 200%; z-index: 10;">
+            <div class="header-section">
+                <div class="slide-tag">Business Impact</div>
+                <h1 class="slide-title">Business Impact</h1>
+                <p class="slide-subtitle">Expected outcomes and strategic alignment with operational goals.</p>
+            </div>
+            <div class="columns-container">
+                <div class="col-left">
+                    <div class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Expected Outcomes</span>
+                    </div>
+                    <ul class="objective-list">
+                        <li class="objective-item">
+                            <div class="check-icon"><i class="fas fa-bolt"></i></div>
+                            <div>
+                                <span class="objective-text">Faster Record Processing</span>
+                                <span class="objective-subtext">Streamlined data entry and review cycles reduce time-per-task.</span>
+                            </div>
+                        </li>
+                        <li class="objective-item">
+                            <div class="check-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div>
+                                <span class="objective-text">Reduced Accidental Errors</span>
+                                <span class="objective-subtext">Validation constraints and clear visual cues prevent common mistakes.</span>
+                            </div>
+                        </li>
+                        <li class="objective-item">
+                            <div class="check-icon"><i class="fas fa-eye"></i></div>
+                            <div>
+                                <span class="objective-text">Improved Clarity</span>
+                                <span class="objective-subtext">Optimized for non-technical users through semantic design and readability.</span>
+                            </div>
+                        </li>
+                        <li class="objective-item">
+                            <div class="check-icon"><i class="fas fa-layer-group"></i></div>
+                            <div>
+                                <span class="objective-text">Scalable Structure</span>
+                                <span class="objective-subtext">Flexible architecture ready for future features and larger datasets.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-right">
+                    <div class="section-title">
+                        <i class="fas fa-compass"></i>
+                        <span>Strategic Alignment</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; padding: 32px; background-color: white; border: 1px solid #E5E7EB; border-left: 4px solid #4F46E5; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                        <div style="width: 56px; height: 56px; background-color: #EEF2FF; color: #4F46E5; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 24px;">
+                            <i class="fas fa-ruler-combined"></i>
+                        </div>
+                        <h3 style="font-size: 22px; font-weight: 700; color: #111827; margin-bottom: 12px;">Enterprise Standards</h3>
+                        <p style="font-size: 16px; color: #4B5563; line-height: 1.6; margin: 0;">The design ecosystem is rigorously aligned with enterprise table interaction standards, ensuring familiarity, consistency, and professional-grade usability across all modules.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14: Interactive Prototype -->
+<div class="slide" id="slide-14">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                        <div style="position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background-color: #F0FDF4; border-radius: 50%; opacity: 0.6; z-index: 0;"></div>
+        <div style="position: absolute; bottom: -150px; left: -150px; width: 600px; height: 600px; background-color: #F3E8FF; border-radius: 50%; opacity: 0.5; z-index: 0;"></div>
+        <div class="header" style="margin-bottom: 50px; text-align: center; position: relative; z-index: 10;">
+            <span class="tag">Hands-on Review</span>
+            <h1 class="title">Interactive Prototype</h1>
+            <p class="subtitle">Experience the full workflow with high-fidelity HTML prototypes.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; flex: 1; position: relative; z-index: 10; align-items: center; justify-content: center; gap: 50px;">
+            <div style="display: flex; gap: 40px; width: 100%; justify-content: center;">
+                <div style="background: white; border-radius: 20px; padding: 32px; width: 420px; border: 1px solid #E5E7EB; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s;">
+                    <div style="width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; background-color: #ECFDF5; color: #059669;">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 style="font-size: 24px; font-weight: 700; color: #1F2937; margin-bottom: 8px;">Budget Table</h3>
+                    <p style="font-size: 14px; color: #6B7280; margin-bottom: 24px; line-height: 1.5;">Full financial overview with advanced filtering, amount formatting, and approval workflows.</p>
+                    <a class="cta-button" href="budget-responsive-prototype.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                        <i class="fas fa-external-link-alt"></i> Launch Prototype
+                    </a>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 20px; justify-content: center;">
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-desktop"></i> Desktop
+                        </span>
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-tablet-alt"></i> Tablet
+                        </span>
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-mobile-alt"></i> Mobile
+                        </span>
+                    </div>
+                </div>
+                <div style="background: white; border-radius: 20px; padding: 32px; width: 420px; border: 1px solid #E5E7EB; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; text-align: center;">
+                    <div style="width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; background-color: #EEF2FF; color: #4F46E5;">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 style="font-size: 24px; font-weight: 700; color: #1F2937; margin-bottom: 8px;">WebOrder Table</h3>
+                    <p style="font-size: 14px; color: #6B7280; margin-bottom: 24px; line-height: 1.5;">Order processing system featuring item details, invoice generation, and status tracking.</p>
+                    <a class="cta-button cta-secondary" href="weborder-responsive-prototype.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                        <i class="fas fa-external-link-alt"></i> Launch Prototype
+                    </a>
+                    <div style="display: flex; gap: 8px; margin-top: 20px; justify-content: center;">
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-desktop"></i> Desktop
+                        </span>
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-tablet-alt"></i> Tablet
+                        </span>
+                        <span style="font-size: 11px; color: #6B7280; background-color: #F3F4F6; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-mobile-alt"></i> Mobile
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 12px; padding: 20px 40px; display: flex; align-items: center; gap: 40px;">
+                <span style="font-size: 14px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">Test Capabilities:</span>
+                <div style="display: flex; gap: 32px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: #334155; font-weight: 500; font-size: 15px;">
+                        <i class="fas fa-filter" style="color: #6366F1;"></i> Advanced Filtering
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #334155; font-weight: 500; font-size: 15px;">
+                        <i class="fas fa-expand-alt" style="color: #6366F1;"></i> Row Expansion
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #334155; font-weight: 500; font-size: 15px;">
+                        <i class="fas fa-mouse-pointer" style="color: #6366F1;"></i> Action Execution
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #334155; font-weight: 500; font-size: 15px;">
+                        <i class="fas fa-list-ol" style="color: #6366F1;"></i> Pagination
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Conclusion -->
+<div class="slide" id="slide-15">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; background-color: #ffffff; padding: 40px 60px 120px 60px;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 12px; background-color: #4F46E5; z-index: 20;"></div>
+        <div style="position: absolute; width: 600px; height: 600px; background-color: #F9FAFB; border: 1px solid #F3F4F6; border-radius: 50%; top: -200px; right: -200px; z-index: 0;"></div>
+        <div style="position: absolute; width: 600px; height: 600px; background-color: #F9FAFB; border: 1px solid #F3F4F6; border-radius: 50%; bottom: -200px; left: -200px; z-index: 0;"></div>
+        <div class="header" style="text-align: center; margin-bottom: 50px; position: relative; z-index: 10;">
+            <span class="tag">Final Review</span>
+            <h1 class="title">System Design Summary</h1>
+            <p class="subtitle">A robust, scalable solution tailored for operational excellence.</p>
+        </div>
+        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; gap: 24px; align-items: center; justify-content: center; flex: 1;">
+            <div style="display: flex; gap: 24px; width: 100%; justify-content: center;">
+                <div style="flex: 1; background-color: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); height: 180px; max-width: 300px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; background-color: #EFF6FF; color: #3B82F6;">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px; line-height: 1.3;">High-Volume<br/>Workflows</h3>
+                    <p style="font-size: 14px; color: #6B7280; line-height: 1.5; margin: 0;">Optimized for processing 100+ entries efficiently without performance lag.</p>
+                </div>
+                <div style="flex: 1; background-color: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); height: 180px; max-width: 300px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; background-color: #F3E8FF; color: #7C3AED;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px; line-height: 1.3;">Contextual<br/>Clarity</h3>
+                    <p style="font-size: 14px; color: #6B7280; line-height: 1.5; margin: 0;">Interface elements adapt to data status, reducing visual noise.</p>
+                </div>
+                <div style="flex: 1; background-color: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); height: 180px; max-width: 300px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; background-color: #ECFDF5; color: #10B981;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px; line-height: 1.3;">Error<br/>Prevention</h3>
+                    <p style="font-size: 14px; color: #6B7280; line-height: 1.5; margin: 0;">Guardrails and confirmation steps minimize accidental operational mistakes.</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 24px; width: 80%; justify-content: center;">
+                <div style="flex: 1; background-color: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); height: 180px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; background-color: #FFF7ED; color: #EA580C;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px; line-height: 1.3;">Cross-Device<br/>Scalability</h3>
+                    <p style="font-size: 14px; color: #6B7280; line-height: 1.5; margin: 0;">Seamless experience across Desktop, Tablet, and Mobile interfaces.</p>
+                </div>
+                <div style="flex: 1; background-color: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); height: 180px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; background-color: #EEF2FF; color: #4F46E5;">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px; line-height: 1.3;">Enterprise<br/>Best Practices</h3>
+                    <p style="font-size: 14px; color: #6B7280; line-height: 1.5; margin: 0;">Aligned with industry standards for financial data interaction patterns.</p>
+                </div>
+            </div>
+        </div>
+        <div style="position: relative; z-index: 10; margin-top: 40px; padding-top: 30px; border-top: 1px solid #F3F4F6; display: flex; justify-content: center; align-items: center;">
+            <div style="background-color: #111827; color: white; padding: 12px 32px; border-radius: 50px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                <i class="fas fa-comments" style="color: #818CF8;"></i>
+                <span style="font-weight: 600; font-size: 15px; letter-spacing: 0.02em;">Open for Feedback & Iteration</span>
+            </div>
+        </div>
+    </div>
+</div>
+        
+    </div>
+    
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="slide-indicators">
+            <span class="indicator active" onclick="goToSlide(1)"></span>
+            <span class="indicator" onclick="goToSlide(2)"></span>
+            <span class="indicator" onclick="goToSlide(3)"></span>
+            <span class="indicator" onclick="goToSlide(4)"></span>
+            <span class="indicator" onclick="goToSlide(5)"></span>
+            <span class="indicator" onclick="goToSlide(6)"></span>
+            <span class="indicator" onclick="goToSlide(7)"></span>
+            <span class="indicator" onclick="goToSlide(8)"></span>
+            <span class="indicator" onclick="goToSlide(9)"></span>
+            <span class="indicator" onclick="goToSlide(10)"></span>
+            <span class="indicator" onclick="goToSlide(11)"></span>
+            <span class="indicator" onclick="goToSlide(12)"></span>
+            <span class="indicator" onclick="goToSlide(13)"></span>
+            <span class="indicator" onclick="goToSlide(14)"></span>
+            <span class="indicator" onclick="goToSlide(15)"></span>
+        </div>
+        
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 15;
+
+function showSlide(n) {
+    const slides = document.querySelectorAll('.slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const counter = document.querySelector('.slide-counter .current-slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (n > totalSlides) currentSlide = totalSlides;
+    if (n < 1) currentSlide = 1;
+    
+    // Update slides
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[currentSlide - 1].classList.add('active');
+    
+    // Update indicators
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    indicators[currentSlide - 1].classList.add('active');
+    
+    // Update counter
+    counter.textContent = currentSlide;
+    
+    // Update button states
+    prevBtn.disabled = currentSlide === 1;
+    nextBtn.disabled = currentSlide === totalSlides;
+}
+
+function changeSlide(n) {
+    currentSlide += n;
+    showSlide(currentSlide);
+}
+
+function goToSlide(n) {
+    currentSlide = n;
+    showSlide(currentSlide);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft') {
+        changeSlide(-1);
+    } else if (event.key === 'ArrowRight') {
+        changeSlide(1);
+    }
+});
+
+// Initialize
+showSlide(currentSlide);
+</script>
+
+</body>
+</html>

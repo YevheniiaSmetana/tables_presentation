@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget - Responsive Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f7fa;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+/* ПО УМОЛЧАНИЮ СКРЫТЬ ВСЕ ВЕРСИИ */
+.desktop-view {
+    display: none;
+}
+
+.mobile-view {
+    display: none;
+}
+
+.tablet-view {
+    display: none;
+}
+
+        /* ===== ОБЩИЕ СТИЛИ ДЛЯ DESKTOP И TABLET ===== */
+.container {
+    background: white;
+    overflow: hidden;
+}
+
+.header {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.header h1 {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #64748b;
+}
+
+.filter-group select,
+.filter-group input {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #1e293b;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #00ACEC;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-group select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+    cursor: pointer;
+}
+
+.filters-link {
+    color: #00ACEC;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.2s;
+}
+
+.filters-link:hover {
+    color: #2563eb;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: white;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+}
+
+tbody tr.data-row {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+    cursor: pointer;
+}
+
+tbody tr.data-row:hover {
+    background: #f8fafc;
+}
+
+tbody tr.data-row.active {
+    background: #f0f9ff;
+}
+
+tbody td {
+    color: #334155;
+}
+
+.id-col {
+    font-weight: 600;
+}
+
+/* STATUS BADGES */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-wachten {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-betaald {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.amount {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-btn {
+    border-radius: 20px;
+    font-weight: 600;
+    border: 2px solid;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+}
+
+.action-btn.approve {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.action-btn.approve:hover {
+    background: #10b981;
+    color: white;
+}
+
+.action-btn.reject {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.action-btn.reject:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.action-btn.download {
+    border-color: #00ACEC;
+    color: #00ACEC;
+}
+
+.action-btn.download:hover {
+    background: #00ACEC;
+    color: white;
+}
+
+/* DETAILS */
+.details-row {
+    display: none;
+}
+
+.details-row.show {
+    display: table-row;
+}
+
+.details-cell {
+    padding: 0 !important;
+    background: #f0f9ff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.details-content {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.details-sections {
+    display: grid;
+    gap: 24px;
+}
+
+.details-section {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.section-title-desktop {
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 32px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    color: #1e293b;
+    font-weight: 600;
+    text-align: left;
+}
+
+.detail-value a {
+    color: #00ACEC;
+    text-decoration: none;
+}
+
+.bekijk-school {
+    color: #00ACEC;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.budget-table {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.budget-table thead {
+    background: white;
+}
+
+.budget-table th {
+    text-align: left;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.budget-table td {
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    background: white;
+}
+
+.budget-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination-info {
+    color: #64748b;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.per-page {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.page-btn {
+    border: 1px solid #cbd5e1;
+    background: white;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    border-color: #00ACEC;
+    color: #00ACEC;
+}
+
+.page-btn.active {
+    background: #00ACEC;
+    color: white;
+    border-color: #00ACEC;
+}
+
+        /* ===== DESKTOP STYLES (768px+) ===== */
+        @media (min-width: 1280px) {
+
+            .mobile-view,
+    .tablet-view {
+        display: none !important;
+    }
+
+    .desktop-view {
+        display: block !important; /* Важно !important */
+    }
+    body {
+        padding: 24px;
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+        padding: 32px 32px 24px;
+    }
+
+    .header h1 {
+        font-size: 28px;
+        margin-bottom: 24px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: 160px 180px 1fr 1fr 1.6fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .filter-group label {
+        font-size: 13px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    .filter-group:nth-child(1) select,
+    .filter-group:nth-child(2) select {
+        padding: 10px 10px;
+        font-size: 13px;
+    }
+
+    .search-group {
+        position: relative;
+    }
+
+    .search-group input {
+        width: 100%;
+        padding-left: 40px;
+    }
+
+    .filters-link {
+        font-size: 14px;
+        padding: 10px 0;
+        margin-top: 18px;
+    }
+
+    thead th {
+        padding: 16px 20px;
+        font-size: 12px;
+    }
+
+    tbody td {
+        padding: 18px 20px;
+        font-size: 14px;
+    }
+
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .details-content {
+        padding: 32px;
+    }
+
+    .details-sections {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .details-section {
+        padding: 20px;
+    }
+
+    .section-title-desktop {
+        font-size: 13px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+    }
+
+    .detail-value {
+        font-size: 14px;
+    }
+
+    .bekijk-school {
+        font-size: 14px;
+    }
+
+    .budget-table th {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    .budget-table td {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .pagination {
+        padding: 20px 32px;
+    }
+
+    .pagination-info {
+        font-size: 13px;
+    }
+
+    .per-page {
+        padding: 8px 12px;
+        font-size: 13px;
+        margin-right: 12px;
+    }
+
+    .page-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}
+
+/* ===== TABLET STYLES (768px - 1279px) ===== */
+@media (min-width: 768px) and (max-width: 1279px) {
+    body {
+        padding: 0;
+        background: white;
+        overflow-x: hidden; /* Добавить */
+    }
+
+    .mobile-view,
+    .tablet-view {
+        display: none !important;
+    }
+    
+    .desktop-view {
+        display: block !important; /* Важно !important */
+    }
+
+    .container {
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        overflow-x: hidden; /* Добавить */
+    }
+
+    .header {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: 140px 160px 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px; /* Добавить */
+    }
+
+    .search-group {
+        grid-column: 1 / -1;
+    }
+
+    .filter-group label {
+        font-size: 12px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+        padding: 9px 12px;
+        font-size: 13px;
+    }
+
+    .filters-link {
+        font-size: 13px;
+        padding: 8px 0;
+        margin-top: 0; /* Изменить */
+    }
+
+    /* ТАБЛИЦА С ГОРИЗОНТАЛЬНЫМ СКРОЛЛОМ */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -20px; /* Добавить - позволяет таблице растягиваться */
+        padding: 0 20px; /* Добавить */
+    }
+
+    table {
+        min-width: 1100px;
+    }
+
+    thead th {
+        padding: 12px 14px;
+        font-size: 11px;
+    }
+
+    tbody td {
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .action-buttons {
+        gap: 6px;
+    }
+
+    .action-btn {
+        padding: 7px 12px;
+        font-size: 12px;
+        gap: 4px;
+    }
+
+    .details-content {
+        padding: 20px;
+    }
+
+    .details-section {
+        padding: 16px;
+    }
+
+    .section-title-desktop {
+        font-size: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+    }
+
+    .detail-value {
+        font-size: 13px;
+    }
+
+    .bekijk-school {
+        font-size: 13px;
+    }
+
+    .budget-table th {
+        padding: 9px 10px;
+        font-size: 10px;
+    }
+
+    .budget-table td {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .pagination {
+        padding: 16px 20px;
+    }
+
+    .pagination-info {
+        font-size: 12px;
+    }
+
+    .per-page {
+        padding: 7px 10px;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    .page-btn {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Для широких планшетов - 2 колонки в details */
+@media (min-width: 900px) and (max-width: 1279px) {
+    .details-sections {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Для узких планшетов - 1 колонка в details */
+@media (min-width: 768px) and (max-width: 899px) {
+    .details-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    /* На очень узких планшетах можно уменьшить минимальную ширину таблицы */
+    table {
+        min-width: 900px;
+    }
+}
+
+        /* ===== MOBILE STYLES (< 768px) ===== */
+        @media (max-width: 767px) {
+            .desktop-view,
+    .tablet-view {
+        display: none !important;
+    }
+
+    .mobile-view {
+        display: block !important; /* Важно !important */
+    }
+            .mobile-container {
+                min-height: 100vh;
+                background: #f5f7fa;
+            }
+
+            .mobile-header {
+                background: white;
+                padding: 16px;
+                border-bottom: 1px solid #e2e8f0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .mobile-header h1 {
+                font-size: 20px;
+                font-weight: 600;
+                color: #0f172a;
+                margin-bottom: 12px;
+            }
+
+            .date-filters {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .date-input-group {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .date-input-group label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .date-input-group input {
+                padding: 10px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+
+            .filter-dropdowns {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .filter-select {
+                padding: 10px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 14px;
+                background: white;
+            }
+
+            .mobile-search {
+                position: relative;
+            }
+
+            .mobile-search input {
+                width: 100%;
+                padding: 12px 16px 12px 44px;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                font-size: 15px;
+                background: #f8fafc;
+            }
+
+            .mobile-search::before {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 18px;
+            }
+
+            .summary-bar {
+                padding: 12px 16px;
+                background: white;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .summary-text {
+                font-size: 13px;
+                color: #64748b;
+            }
+
+            .filters-link-mobile {
+                color: #00ACEC;
+                font-size: 13px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .card-list {
+                padding: 12px 16px 80px;
+            }
+
+            .budget-card {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 8px;
+            }
+
+            .card-id {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .id-number {
+                font-size: 16px;
+                font-weight: 700;
+                color: #00ACEC;
+            }
+
+            .school-number {
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .card-amount {
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+            }
+
+            .school-name-card {
+                font-size: 15px;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+
+            .card-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .info-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .info-value {
+                font-size: 14px;
+                font-weight: 500;
+                color: #1e293b;
+            }
+
+            .card-footer {
+                padding-top: 12px;
+                border-top: 1px solid #f1f5f9;
+            }
+
+            .status-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .status-badge-mobile {
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .expand-icon {
+                font-size: 20px;
+                color: #94a3b8;
+                transition: transform 0.3s;
+                cursor: pointer;
+            }
+
+            .budget-card.expanded .expand-icon {
+                transform: rotate(180deg);
+            }
+
+            .action-buttons-mobile {
+                display: flex;
+                flex-direction: column;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .btn-action-mobile {
+                padding: 10px 16px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                border: 2px solid;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                transition: all 0.2s;
+            }
+
+            .btn-approve-mobile {
+                border-color: #10b981;
+                color: #10b981;
+            }
+
+            .btn-reject-mobile {
+                border-color: #ef4444;
+                color: #ef4444;
+            }
+
+            .card-details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+
+            .budget-card.expanded .card-details {
+                max-height: 3000px;
+                transition: max-height 0.5s ease-in;
+            }
+
+            .details-content-mobile {
+                padding-top: 16px;
+                margin-top: 16px;
+                border-top: 2px solid #f1f5f9;
+            }
+
+            .details-section-mobile {
+                background: #f8fafc;
+                border-radius: 10px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .section-header-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .section-title-mobile {
+                font-size: 13px;
+                font-weight: 700;
+                color: #475569;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .bekijk-school-mobile {
+                color: #00ACEC;
+                font-size: 13px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .detail-row-mobile {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #e2e8f0;
+                gap: 12px;
+            }
+
+            .detail-row-mobile:last-child {
+                border-bottom: none;
+            }
+
+            .detail-label-mobile {
+                font-size: 13px;
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .detail-value-mobile {
+                font-size: 13px;
+                color: #0f172a;
+                font-weight: 600;
+                text-align: right;
+            }
+
+            .detail-value-mobile a {
+                color: #00ACEC;
+                text-decoration: none;
+            }
+
+            .budget-table-mobile {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid #e2e8f0;
+            }
+
+            .budget-row-mobile {
+                display: grid;
+                grid-template-columns: 1fr 60px 60px 60px;
+                gap: 8px;
+                padding: 12px;
+                border-bottom: 1px solid #f1f5f9;
+                align-items: center;
+            }
+
+            .budget-row-mobile:first-child {
+                background: #f8fafc;
+                font-weight: 600;
+                color: #64748b;
+                font-size: 11px;
+                text-transform: uppercase;
+            }
+
+            .budget-row-mobile:last-child {
+                border-bottom: none;
+            }
+
+            .budget-label-mobile {
+                font-size: 13px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .budget-value-mobile {
+                font-size: 13px;
+                color: #334155;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .download-btn-mobile {
+                width: 100%;
+                padding: 14px 20px;
+                border-radius: 20px;
+                background: #00ACEC;
+                color: white;
+                border: none;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 16px;
+                box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- DESKTOP VERSION -->
+    <div class="desktop-view">
+        <div class="container">
+            <div class="header">
+                <h1>Budget</h1>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="statusFilter">
+                            <option value="all">Alle statussen</option>
+                            <option value="wachten">Wachten op goedkeuring</option>
+                            <option value="betaald">Betaald</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Schooltype</label>
+                        <select id="schooltypeFilter">
+                            <option value="all">Alle schooltypes</option>
+                            <option value="VO">VO</option>
+                            <option value="MBO">MBO</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Datum van</label>
+                        <input type="date" value="2026-01-01">
+                    </div>
+                    <div class="filter-group">
+                        <label>Datum t/m</label>
+                        <input type="date" value="2026-01-16">
+                    </div>
+                    <div class="filter-group search-group">
+                        <label>Zoeken</label>
+                        <input type="text" placeholder="Zoek op school, partner...">
+                    </div>
+                </div>
+                <a href="#" class="filters-link" onclick="resetFilters(); return false;">Filters annuleren</a>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>AANMAAKDATUM</th>
+                            <th>SCHOOLNUMMER</th>
+                            <th>SCHOOLNAAM</th>
+                            <th>TYPE</th>
+                            <th>AANTAL</th>
+                            <th>STATUS</th>
+                            <th>FACTUUR</th>
+                            <th>FACTUURBEDRAG</th>
+                            <th>ACTIES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="data-row" onclick="toggleRow(this, 'details1')">
+                            <td class="id-col">549</td>
+                            <td>09-01-2026</td>
+                            <td>10224</td>
+                            <td>IB x CJP x MBO x Robin</td>
+                            <td>VO</td>
+                            <td>10</td>
+                            <td><span class="status-badge status-wachten">Wachten op goedkeuring</span></td>
+                            <td>26700007</td>
+                            <td class="amount">€ 106,25</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn approve" onclick="approveEntry(event, 549)">
+                                        <span style="font-size: 16px;">✓</span> Goedkeuren
+                                    </button>
+                                    <button class="action-btn reject" onclick="rejectEntry(event, 549)">
+                                        <span style="font-size: 16px;">✕</span> Afkeuren</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details1">
+                            <td colspan="10" class="details-cell">
+                                <div class="details-content">
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Test 09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Budgethouder Nick van Lieropp</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div class="section-title-desktop" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">DUO INFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Lauwers College Christelijk</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">00ZV07</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">36</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">AFWIJKING</span>
+                                                    <span class="detail-value">100,00%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BUDGET</div>
+                                            <table class="budget-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>2026</th>
+                                                        <th>2025</th>
+                                                        <th>2024</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Collectief</strong></td>
+                                                        <td>5</td>
+                                                        <td>100</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Individueel</strong></td>
+                                                        <td>5</td>
+                                                        <td>100</td>
+                                                        <td>100</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Docentenpassen</strong></td>
+                                                        <td>5</td>
+                                                        <td>50</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Gratis docenten</strong></td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="data-row" onclick="toggleRow(this, 'details2')">
+                            <td class="id-col">548</td>
+                            <td>09-01-2026</td>
+                            <td>10233</td>
+                            <td>Schoolnaam Nick 2025/2026</td>
+                            <td>MBO</td>
+                            <td>20</td>
+                            <td><span class="status-badge status-betaald">Betaald</span></td>
+                            <td>26700006</td>
+                            <td class="amount">€ 212,50</td>
+                            <td>
+                                <button class="action-btn download" onclick="downloadInvoice(event, 548)">
+                                    <span style="font-size: 16px ">⬇</span> Downloaden
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details2">
+                            <td colspan="10" class="details-cell">
+                                <div class="details-content">
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Test 09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Budgethouder Nick van Lieropp</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div class="section-title-desktop" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">DUO INFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Schoolnaam Nick 2025/2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">10AA33</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">42</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">AFWIJKING</span>
+                                                    <span class="detail-value">52,38%</span>
+                                                </div>
+                                            </div>  
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BUDGET</div>
+                                            <table class="budget-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>2026</th>
+                                                        <th>2025</th>
+                                                        <th>2024</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Collectief</strong></td>
+                                                        <td>20</td>  <!-- было: 5 -->
+                                                        <td>90</td>   <!-- было: 100 -->
+                                                        <td>85</td>   <!-- было: 0 -->
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Individueel</strong></td>
+                                                        <td>0</td>    <!-- было: 5 -->
+                                                        <td>10</td>   <!-- было: 100 -->
+                                                        <td>15</td>   <!-- было: 100 -->
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Docentenpassen</strong></td>
+                                                        <td>3</td>    <!-- было: 5 -->
+                                                        <td>8</td>    <!-- было: 50 -->
+                                                        <td>5</td>    <!-- было: 0 -->
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Gratis docenten</strong></td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="data-row" onclick="toggleRow(this, 'details3')">
+                            <td class="id-col">547</td>
+                            <td>09-01-2026</td>
+                            <td>1009</td>
+                            <td>Groene School</td>
+                            <td>VO</td>
+                            <td>725</td>
+                            <td><span class="status-badge status-betaald">Betaald</span></td>
+                            <td>26700005</td>
+                            <td class="amount">€ 8.700,00</td>
+                            <td>
+                                <button class="action-btn download" onclick="downloadInvoice(event, 547)">
+                                    <span style="font-size: 16px;">⬇</span> Downloaden
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details3">
+                            <td colspan="10" class="details-cell">
+                                <div class="details-content">
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:groene@school.nl">groene@school.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Groene Straat 123<br>1234AB Amsterdam</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">GS-2026-001</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Groene School 2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Jan de Vries</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:jan@school.nl">jan@school.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div class="section-title-desktop" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">DUO INFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Groene School</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">VO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">01GS09</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">800</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">AFWIJKING</span>
+                                                    <span class="detail-value">10,00%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BUDGET</div>
+                                            <table class="budget-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>2026</th>
+                                                        <th>2025</th>
+                                                        <th>2024</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Collectief</strong></td>
+                                                        <td>700</td>
+                                                        <td>650</td>
+                                                        <td>600</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Individueel</strong></td>
+                                                        <td>25</td>
+                                                        <td>30</td>
+                                                        <td>28</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Docentenpassen</strong></td>
+                                                        <td>15</td>
+                                                        <td>12</td>
+                                                        <td>10</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Gratis docenten</strong></td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="data-row" onclick="toggleRow(this, 'details4')">
+                            <td class="id-col">546</td>
+                            <td>08-01-2026</td>
+                            <td>10215</td>
+                            <td>Atheneum Havo Vbo</td>
+                            <td>MBO</td>
+                            <td>45</td>
+                            <td><span class="status-badge status-wachten">Wachten op goedkeuring</span></td>
+                            <td>26700004</td>
+                            <td class="amount">€ 537,50</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn approve" onclick="approveEntry(event, 546)">
+                                        <span style="font-size: 16px;">✓</span> Goedkeuren
+                                    </button>
+                                    <button class="action-btn reject" onclick="rejectEntry(event, 546)">
+                                        <span style="font-size: 16px;">✕</span> Afkeuren
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr class="details-row" id="details4">
+                            <td colspan="10" class="details-cell">
+                                <div class="details-content">
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:atheneum@school.nl">atheneum@school.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Schoolstraat 45<br>2000AB Rotterdam</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">ATH-2026-045</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Atheneum 2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Maria Jansen</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:m.jansen@school.nl">m.jansen@school.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div class="section-title-desktop" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">DUO INFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Atheneum Havo Vbo</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">10BB15</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">120</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">AFWIJKING</span>
+                                                    <span class="detail-value">62,50%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BUDGET</div>
+                                            <table class="budget-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>2026</th>
+                                                        <th>2025</th>
+                                                        <th>2024</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Collectief</strong></td>
+                                                        <td>40</td>
+                                                        <td>35</td>
+                                                        <td>30</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Individueel</strong></td>
+                                                        <td>5</td>
+                                                        <td>8</td>
+                                                        <td>10</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Docentenpassen</strong></td>
+                                                        <td>2</td>
+                                                        <td>3</td>
+                                                        <td>2</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Gratis docenten</strong></td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <div class="pagination-info">Pagina 1 van 4 (137 resultaten)</div>
+                <div class="pagination-controls">
+                    <select class="per-page">
+                        <option>50 per pagina</option>
+                        <option>100 per pagina</option>
+                        <option>200 per pagina</option>
+                    </select>
+                    <button class="page-btn">‹‹</button>
+                    <button class="page-btn">‹</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">›</button>
+                    <button class="page-btn">››</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE VERSION -->
+    <div class="mobile-view">
+        <div class="mobile-container">
+            <div class="mobile-header">
+                <h1>Budget</h1>
+                <div class="date-filters">
+                    <div class="date-input-group">
+                        <label>Datum van</label>
+                        <input type="date" value="2026-01-01">
+                    </div>
+                    <div class="date-input-group">
+                        <label>Datum t/m</label>
+                        <input type="date" value="2026-01-16">
+                    </div>
+                </div>
+                <div class="filter-dropdowns">
+                    <select class="filter-select">
+                        <option>Alle statussen</option>
+                        <option>Wachten op goedkeuring</option>
+                        <option>Betaald</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Alle schooltypes</option>
+                        <option>VO</option>
+                        <option>MBO</option>
+                    </select>
+                </div>
+                <div class="mobile-search">
+                    <input type="text" placeholder="Zoek op school, partner...">
+                </div>
+            </div>
+
+            <div class="summary-bar">
+                <span class="summary-text">137 resultaten gevonden</span>
+                <a href="#" class="filters-link-mobile">Filters annuleren</a>
+            </div>
+
+            <div class="card-list">
+                <!-- Card 1 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#549</span>
+                            <span class="school-number">School 10224</span>
+                        </div>
+                        <div class="card-amount">€ 106,25</div>
+                    </div>
+                    <div class="school-name-card">IB x CJP x MBO x Robin</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">09-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">VO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">10</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">FACTUUR</span>
+                            <span class="info-value">26700007</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-wachten">Wachten op goedkeuring</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                        <div class="action-buttons-mobile">
+                            <button class="btn-action-mobile btn-approve-mobile" onclick="approveMobile(event, 549)">✓ Goedkeuren</button>
+                            <button class="btn-action-mobile btn-reject-mobile" onclick="rejectMobile(event, 549)">✕ Afkeuren</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 - Expanded -->
+<div class="budget-card expanded">
+    <div class="card-header">
+        <div class="card-id">
+            <span class="id-number">#548</span>
+            <span class="school-number">School 10233</span>
+        </div>
+        <div class="card-amount">€ 212,50</div>
+    </div>
+    <div class="school-name-card">Schoolnaam Nick 2025/2026</div>
+    <div class="card-info">
+        <div class="info-item">
+            <span class="info-label">DATUM</span>
+            <span class="info-value">09-01-2026</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">TYPE</span>
+            <span class="info-value">MBO</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">AANTAL</span>
+            <span class="info-value">20</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">FACTUUR</span>
+            <span class="info-value">26700006</span>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="status-row">
+            <span class="status-badge-mobile status-betaald">Betaald</span>
+            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+        </div>
+    </div>
+
+    <div class="card-details">
+        <div class="details-content-mobile">
+            <div class="details-section-mobile">
+                <div class="section-header-mobile">
+                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Email</span>
+                    <span class="detail-value-mobile"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Adres</span>
+                    <span class="detail-value-mobile">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Referentienummer</span>
+                    <span class="detail-value-mobile">09012026</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Kostenplaats</span>
+                    <span class="detail-value-mobile">Test 09012026</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Budgethouder</span>
+                    <span class="detail-value-mobile">Budgethouder Nick van Lieropp</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Budgethouder Email</span>
+                    <span class="detail-value-mobile"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                </div>
+            </div>
+
+            <div class="details-section-mobile">
+                <div class="section-header-mobile">
+                    <span class="section-title-mobile">DUO INFORMATIE</span>
+                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Schoolnaam</span>
+                    <span class="detail-value-mobile">Schoolnaam Nick 2025/2026</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">School type</span>
+                    <span class="detail-value-mobile">MBO</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Brin</span>
+                    <span class="detail-value-mobile">10AA33</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Studenten DUO</span>
+                    <span class="detail-value-mobile">42</span>
+                </div>
+                <div class="detail-row-mobile">
+                    <span class="detail-label-mobile">Afwijking</span>
+                    <span class="detail-value-mobile">52,38%</span>
+                </div>
+            </div>
+
+            <div class="details-section-mobile">
+                <div class="section-header-mobile">
+                    <span class="section-title-mobile">BUDGET</span>
+                </div>
+                <div class="budget-table-mobile">
+                    <div class="budget-row-mobile">
+                        <div></div>
+                        <div class="budget-value-mobile">2026</div>
+                        <div class="budget-value-mobile">2025</div>
+                        <div class="budget-value-mobile">2024</div>
+                    </div>
+                    <div class="budget-row-mobile">
+                        <div class="budget-label-mobile">Collectief</div>
+                        <div class="budget-value-mobile">20</div>
+                        <div class="budget-value-mobile">90</div>
+                        <div class="budget-value-mobile">85</div>
+                    </div>
+                    <div class="budget-row-mobile">
+                        <div class="budget-label-mobile">Individueel</div>
+                        <div class="budget-value-mobile">0</div>
+                        <div class="budget-value-mobile">10</div>
+                        <div class="budget-value-mobile">15</div>
+                    </div>
+                    <div class="budget-row-mobile">
+                        <div class="budget-label-mobile">Docentenpassen</div>
+                        <div class="budget-value-mobile">3</div>
+                        <div class="budget-value-mobile">8</div>
+                        <div class="budget-value-mobile">5</div>
+                    </div>
+                    <div class="budget-row-mobile">
+                        <div class="budget-label-mobile">Gratis docenten</div>
+                        <div class="budget-value-mobile">0</div>
+                        <div class="budget-value-mobile">0</div>
+                        <div class="budget-value-mobile">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="download-btn-mobile" onclick="downloadMobile(event, 548)">Download factuur</button>
+        </div>
+    </div>
+</div>
+
+                <!-- Card 3 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#547</span>
+                            <span class="school-number">School 1009</span>
+                        </div>
+                        <div class="card-amount">€ 8.700,00</div>
+                    </div>
+                    <div class="school-name-card">Groene School</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">09-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">VO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">725</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">FACTUUR</span>
+                            <span class="info-value">26700005</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-betaald">Betaald</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Desktop: Toggle row details
+        function toggleRow(row, detailsId) {
+            const allRows = document.querySelectorAll('.data-row');
+            const allDetails = document.querySelectorAll('.details-row');
+            const details = document.getElementById(detailsId);
+            
+            if (row.classList.contains('active')) {
+                row.classList.remove('active');
+                details.classList.remove('show');
+            } else {
+                allRows.forEach(r => r.classList.remove('active'));
+                allDetails.forEach(d => d.classList.remove('show'));
+                row.classList.add('active');
+                details.classList.add('show');
+            }
+        }
+
+        // Desktop: Action handlers
+        function approveEntry(event, id) {
+            event.stopPropagation();
+            if (confirm(`Weet u zeker dat u entry #${id} wilt goedkeuren?`)) {
+                alert(`Entry #${id} goedgekeurd!`);
+            }
+        }
+
+        function rejectEntry(event, id) {
+            event.stopPropagation();
+            if (confirm(`Weet u zeker dat u entry #${id} wilt afkeuren?`)) {
+                alert(`Entry #${id} afgekeurd!`);
+            }
+        }
+
+        function downloadInvoice(event, id) {
+            event.stopPropagation();
+            alert(`Factuur #${id} wordt gedownload...`);
+        }
+
+        // Mobile: Toggle card expansion
+        function toggleCardMobile(icon) {
+            const card = icon.closest('.budget-card');
+            card.classList.toggle('expanded');
+        }
+
+        function approveMobile(event, id) {
+            event.stopPropagation();
+            if (confirm(`Entry #${id} goedkeuren?`)) {
+                alert(`Entry #${id} goedgekeurd!`);
+            }
+        }
+
+        function rejectMobile(event, id) {
+            event.stopPropagation();
+            if (confirm(`Entry #${id} afkeuren?`)) {
+                alert(`Entry #${id} afgekeurd!`);
+            }
+        }
+
+        function downloadMobile(event, id) {
+            event.stopPropagation();
+            alert(`Factuur #${id} wordt gedownload...`);
+        }
+
+        // Filter reset
+        function resetFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('schooltypeFilter').value = 'all';
+            alert('Filters gereset!');
+        }
+
+        // Pagination
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                    if (this.textContent.match(/\d/)) {
+                        this.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
