@@ -328,8 +328,15 @@
     text-align: center;
 }
 
-/* Только для больших экранов ограничиваем ширину */
-@media (min-width: 1500px) {
+/* На средних экранах (макбук) - одна колонка */
+@media (min-width: 1280px) and (max-width: 1400px) {
+    .tickets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* На больших экранах ограничиваем ширину инпутов */
+@media (min-width: 1401px) {
     .ticket-number {
         max-width: 140px;
     }
