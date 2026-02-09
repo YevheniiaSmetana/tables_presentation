@@ -310,13 +310,13 @@
         }
 
         .ticket-range {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-}
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
 
-.ticket-number {
+        .ticket-number {
     background: white;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
@@ -328,14 +328,14 @@
     text-align: center;
 }
 
-/* На средних экранах (макбук) - одна колонка */
+/* На средних экранах (макбук) - одна колонка, инпуты растягиваются */
 @media (min-width: 1280px) and (max-width: 1400px) {
     .tickets-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* На больших экранах ограничиваем ширину инпутов */
+/* На больших экранах - две колонки с ограничением ширины инпутов */
 @media (min-width: 1401px) {
     .ticket-number {
         max-width: 140px;
@@ -477,7 +477,11 @@
     outline-offset: 2px;
 }
 
-        
+        @media (min-width: 1280px) and (max-width: 1500px) {
+    .tickets-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
         /* ===== DESKTOP STYLES (1280px+) ===== */
         @media (min-width: 1280px) {
