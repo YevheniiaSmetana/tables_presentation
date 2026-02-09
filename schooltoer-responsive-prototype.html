@@ -310,23 +310,30 @@
         }
 
         .ticket-range {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
 
-        .ticket-number {
-            background: white;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e293b;
-            flex: 1;
-            text-align: center;
-        }
+.ticket-number {
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    flex: 1;
+    text-align: center;
+}
+
+/* Только для больших экранов ограничиваем ширину */
+@media (min-width: 1500px) {
+    .ticket-number {
+        max-width: 140px;
+    }
+}
 
         .ticket-count {
             font-size: 13px;
@@ -463,11 +470,7 @@
     outline-offset: 2px;
 }
 
-        @media (min-width: 1280px) and (max-width: 1500px) {
-    .tickets-grid {
-        grid-template-columns: 1fr;
-    }
-}
+        
 
         /* ===== DESKTOP STYLES (1280px+) ===== */
         @media (min-width: 1280px) {
