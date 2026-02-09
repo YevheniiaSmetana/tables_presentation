@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schooltoer - Responsive Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .desktop-view {
+            display: block;
+        }
+
+        .mobile-view {
+            display: none;
+        }
+
+        /* ===== ОБЩИЕ СТИЛИ ДЛЯ DESKTOP И TABLET ===== */
+        .container {
+            background: white;
+            overflow: hidden;
+        }
+
+        .header {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: #1e293b;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #00ACEC;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-group select {
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+            cursor: pointer;
+        }
+
+        .filters-link {
+            color: #00ACEC;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+
+        .filters-link:hover {
+            color: #2563eb;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        thead th {
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+
+        tbody tr.data-row {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        tbody tr.data-row:hover {
+            background: #f8fafc;
+        }
+
+        tbody tr.data-row.active {
+            background: #f0f9ff;
+        }
+
+        tbody td {
+            color: #334155;
+        }
+
+        .id-col {
+            font-weight: 600;
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-afgewezen {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-wachten {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-betaald {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+        /* DETAILS */
+        .details-row {
+            display: none;
+        }
+
+        .details-row.show {
+            display: table-row;
+        }
+
+        .details-cell {
+            padding: 0 !important;
+            background: #f0f9ff;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .details-content {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .school-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .school-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .school-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .bekijk-school {
+            color: #00ACEC;
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .details-sections {
+            display: grid;
+            gap: 24px;
+        }
+
+        .details-section {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .section-title-desktop {
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 32px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            color: #1e293b;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .detail-value a {
+            color: #00ACEC;
+            text-decoration: none;
+        }
+
+        /* TICKETS SECTION */
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .ticket-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .ticket-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .ticket-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .ticket-number {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+            text-align: center;
+        }
+
+        .ticket-count {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* PRODUCTS TABLE */
+        .products-table {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table thead {
+            background: #f8fafc;
+        }
+
+        .products-table th {
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 11px;
+        }
+
+        .products-table td {
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            background: white;
+        }
+
+        .products-table tr:last-child td {
+            border-bottom: none;
+            font-weight: 600;
+        }
+
+        /* ACTION BUTTONS */
+        .action-buttons-details {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            border-radius: 20px;
+            font-weight: 600;
+            border: 2px solid;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            line-height: 1;
+        }
+
+        .action-btn.download {
+            border-color: #00ACEC;
+            color: #00ACEC;
+        }
+
+        .action-btn.download:hover {
+            background: #00ACEC;
+            color: white;
+        }
+
+        .action-btn.reject {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .action-btn.reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pagination-info {
+            color: #64748b;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .per-page {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .page-btn {
+            border: 1px solid #cbd5e1;
+            background: white;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: #00ACEC;
+            color: #00ACEC;
+        }
+
+        .page-btn.active {
+            background: #00ACEC;
+            color: white;
+            border-color: #00ACEC;
+        }
+
+        .ticket-input {
+    cursor: text;
+}
+
+.ticket-input:focus {
+    outline: 2px solid #00ACEC;
+    outline-offset: 2px;
+}
+
+        @media (min-width: 1280px) and (max-width: 1500px) {
+    .tickets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+        /* ===== DESKTOP STYLES (1280px+) ===== */
+        @media (min-width: 1280px) {
+           
+            body {
+                padding: 24px;
+            }
+
+            .container {
+                max-width: 1600px;
+                margin: 0 auto;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            }
+
+            .header {
+                padding: 32px 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+                margin-bottom: 24px;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 160px 160px 1fr 1fr 1.5fr;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .filter-group label {
+                font-size: 13px;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            .search-group {
+                position: relative;
+            }
+
+            .search-group input {
+                width: 100%;
+                padding-left: 40px;
+            }
+
+            .filters-link {
+                font-size: 14px;
+                padding: 10px 0;
+                margin-top: 18px;
+            }
+
+            thead th {
+                padding: 16px 20px;
+                font-size: 12px;
+            }
+
+            tbody td {
+                padding: 18px 20px;
+                font-size: 14px;
+            }
+
+            .details-content {
+                padding: 32px;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .details-sections {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .details-section {
+                padding: 20px;
+            }
+
+            .section-title-desktop {
+                font-size: 13px;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+            }
+
+            .detail-value {
+                font-size: 14px;
+            }
+
+            .products-table th {
+                padding: 10px 12px;
+            }
+
+            .products-table td {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .action-btn {
+    padding: 8px 16px;  /* Меньше! */
+    font-size: 13px;    /* Меньше! */
+}
+
+            .pagination {
+                padding: 20px 32px;
+            }
+
+            .pagination-info {
+                font-size: 13px;
+            }
+
+            .per-page {
+                padding: 8px 12px;
+                font-size: 13px;
+                margin-right: 12px;
+            }
+
+            .page-btn {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+        }
+
+        /* ===== TABLET STYLES (768px - 1279px) ===== */
+        @media (min-width: 768px) and (max-width: 1279px) {
+            body {
+                padding: 0;
+                background: white;
+                overflow-x: hidden;
+            }
+            html {
+                overflow-x: hidden;  
+            }
+
+
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                overflow-x: hidden;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+                margin-bottom: 18px;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 160px 160px 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .search-group {
+                grid-column: 1 / -1;
+            }
+
+            .filter-group label {
+                font-size: 12px;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                padding: 9px 12px;
+                font-size: 13px;
+                width: 100%; 
+            }
+
+            .filters-link {
+                font-size: 13px;
+                padding: 8px 0;
+                margin-top: 0;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+                    table {
+                min-width: 100%;
+                width: 100%;
+            }
+
+            thead th {
+                padding: 12px 14px;
+                font-size: 11px;
+            }
+
+            tbody td {
+                padding: 14px;
+                font-size: 13px;
+            }
+
+            .details-content {
+                padding: 20px;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .details-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .details-section {
+                padding: 16px;
+            }
+
+            .section-title-desktop {
+                font-size: 12px;
+                margin-bottom: 14px;
+                padding-bottom: 10px;
+            }
+
+            .detail-value {
+                font-size: 13px;
+            }
+
+            .products-table th {
+                padding: 9px 10px;
+                font-size: 10px;
+            }
+
+            .products-table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .action-btn {
+                padding: 9px 16px;
+                font-size: 13px;
+            }
+
+            .pagination {
+                padding: 16px 20px;
+            }
+
+            .pagination-info {
+                font-size: 12px;
+            }
+
+            .per-page {
+                padding: 7px 10px;
+                font-size: 12px;
+                margin-right: 10px;
+            }
+
+            .page-btn {
+                padding: 7px 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (min-width: 900px) and (max-width: 1279px) {
+            .details-sections {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ===== MOBILE STYLES (< 768px) ===== */
+        @media (max-width: 767px) {
+            .desktop-view,
+            .tablet-view {
+                display: none !important;
+            }
+
+            .mobile-view {
+                display: block !important;
+            }
+
+            .mobile-container {
+                min-height: 100vh;
+                background: #f5f7fa;
+            }
+
+            .mobile-header {
+                background: white;
+                padding: 16px;
+                border-bottom: 1px solid #e2e8f0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .mobile-header h1 {
+                font-size: 20px;
+                font-weight: 600;
+                color: #0f172a;
+                margin-bottom: 12px;
+            }
+
+            .date-filters {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .date-input-group {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .date-input-group label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .date-input-group input {
+                padding: 10px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+
+            .filter-dropdowns {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .filter-select {
+                padding: 10px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 14px;
+                background: white;
+            }
+
+            .mobile-search {
+                position: relative;
+            }
+
+            .mobile-search input {
+                width: 100%;
+                padding: 12px 16px 12px 44px;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                font-size: 15px;
+                background: #f8fafc;
+            }
+
+            .summary-bar {
+                padding: 12px 16px;
+                background: white;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .summary-text {
+                font-size: 13px;
+                color: #64748b;
+            }
+
+            .filters-link-mobile {
+                color: #00ACEC;
+                font-size: 13px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .card-list {
+                padding: 12px 16px 80px;
+            }
+
+            .budget-card {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 8px;
+            }
+
+            .card-id {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .id-number {
+                font-size: 16px;
+                font-weight: 700;
+                color: #00ACEC;
+            }
+
+            .school-number {
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .card-amount {
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+            }
+
+            .school-name-card {
+                font-size: 15px;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+
+            .card-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .info-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .info-value {
+                font-size: 14px;
+                font-weight: 500;
+                color: #1e293b;
+            }
+
+            .card-footer {
+                padding-top: 12px;
+                border-top: 1px solid #f1f5f9;
+            }
+
+            .status-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .status-badge-mobile {
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .expand-icon {
+                font-size: 20px;
+                color: #94a3b8;
+                transition: transform 0.3s;
+                cursor: pointer;
+            }
+
+            .budget-card.expanded .expand-icon {
+                transform: rotate(180deg);
+            }
+
+            .card-details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+
+            .budget-card.expanded .card-details {
+                max-height: 3000px;
+                transition: max-height 0.5s ease-in;
+            }
+
+            .details-content-mobile {
+                padding-top: 16px;
+                margin-top: 16px;
+                border-top: 2px solid #f1f5f9;
+            }
+
+            .details-section-mobile {
+                background: white;
+                border-radius: 10px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .section-header-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .section-title-mobile {
+                font-size: 13px;
+                font-weight: 700;
+                color: #475569;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .bekijk-school-mobile {
+                color: #00ACEC;
+                font-size: 13px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .detail-row-mobile {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #e2e8f0;
+                gap: 12px;
+            }
+
+            .detail-row-mobile:last-child {
+                border-bottom: none;
+            }
+
+            .detail-label-mobile {
+                font-size: 13px;
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .detail-value-mobile {
+                font-size: 13px;
+                color: #0f172a;
+                font-weight: 600;
+                text-align: right;
+            }
+
+            .detail-value-mobile a {
+                color: #00ACEC;
+                text-decoration: none;
+            }
+
+            .products-table-mobile {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid #e2e8f0;
+                margin-bottom: 16px;
+            }
+
+            .product-row-mobile {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                gap: 8px;
+                padding: 12px;
+                border-bottom: 1px solid #f1f5f9;
+                align-items: center;
+            }
+
+            .product-row-mobile:first-child {
+                background: #f8fafc;
+                font-weight: 600;
+                color: #64748b;
+                font-size: 11px;
+                text-transform: uppercase;
+            }
+
+            .product-row-mobile:last-child {
+                border-bottom: none;
+                font-weight: 600;
+            }
+
+            .product-label-mobile {
+                font-size: 13px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .product-value-mobile {
+                font-size: 13px;
+                color: #334155;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .tickets-mobile {
+                display: grid;
+                grid-template-columns: 1fr; 
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .ticket-section-mobile {
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 12px;
+            }
+
+            .ticket-label-mobile {
+                font-size: 11px;
+                color: #64748b;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 10px;
+            }
+
+            .ticket-range-mobile {
+                display: flex;
+                flex-direction: column; 
+                align-items: stretch; 
+                gap: 8px;             
+                margin-bottom: 6px;
+            }
+
+            .ticket-range-mobile > div[style*="color"] {
+                transform: rotate(90deg); 
+                text-align: center;
+            }
+
+            .ticket-number-mobile {
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                padding: 8px 10px;
+                font-size: 13px;
+                font-weight: 600;
+                color: #1e293b;
+                width: 100%;
+                text-align: center;
+            }
+
+            .ticket-count-mobile {
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 500;
+                text-align: center;
+            }
+
+            .action-buttons-mobile {
+                display: flex;
+                flex-direction: column; 
+                gap: 8px;
+                margin-top: 16px;
+            }
+
+            .btn-action-mobile {
+                width: 100%;
+                padding: 12px 16px;
+                border-radius: 40px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                border: 2px solid;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                transition: all 0.2s;
+            }
+
+            .btn-download-mobile {
+                border-color: #00ACEC;
+                color: #00ACEC;
+            }
+
+            .btn-reject-mobile {
+                border-color: #ef4444;
+                color: #ef4444;
+            }
+        }
+        
+        .save-tickets-btn {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: white;
+    color: #00ACEC;
+    border: 2px solid #00ACEC;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.save-tickets-btn:hover {
+    background: #00ACEC;
+    color: white;
+}
+
+/* Desktop */
+@media (min-width: 1280px) {
+    .save-tickets-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1279px) {
+    .save-tickets-btn {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+}
+
+/* Mobile version */
+@media (max-width: 767px) {
+    .save-tickets-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+        border-radius: 40px;
+        width: 100%;
+    }
+}
+
+       
+    </style>
+</head>
+<body>
+    <!-- DESKTOP VERSION -->
+    <div class="desktop-view">
+        <div class="container">
+            <div class="header">
+                <h1>Schooltoer</h1>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="statusFilter">
+                            <option value="all">Alle statussen</option>
+                            <option value="afgewezen">Afgewezen</option>
+                            <option value="submitted">Aangemaakt</option>
+                            <option value="wachten">Budgethouder goedgekeurd</option>
+                            <option value="betaald">Betaald</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Schooltype</label>
+                        <select id="schooltypeFilter">
+                            <option value="all">Alle schooltypes</option>
+                            <option value="VO">VO</option>
+                            <option value="MBO">MBO</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Datum van</label>
+                        <input type="date" value="2026-01-01">
+                    </div>
+                    <div class="filter-group">
+                        <label>Datum t/m</label>
+                        <input type="date" value="2026-01-16">
+                    </div>
+                    <div class="filter-group search-group">
+                        <label>Zoeken</label>
+                        <input type="text" placeholder="Zoek op school, partner...">
+                    </div>
+                </div>
+                <a href="#" class="filters-link" onclick="resetFilters(); return false;">Filters annuleren</a>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FACTUUR</th>
+                            <th>AANMAAKDATUM</th>
+                            <th>SCHOOLNUMMER</th>
+                            <th>SCHOOLTYPE</th>
+                            <th>TICKETS</th>
+                            <th>AANTAL</th>
+                            <th>STATUS</th>
+                            <th>FACTUURBEDRAG</th>
+                            <th>ACTIES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Row 1 -->
+                        <tr class="data-row" onclick="toggleRow(this, 'details1')">
+                            <td class="id-col">24700018</td>
+                            <td>10-01-2026</td>
+                            <td>1009</td>
+                            <td>VO</td>
+                            <td>NS</td>
+                            <td>30</td>
+                            <td><span class="status-badge status-afgewezen">Afgewezen</span></td>
+                            <td class="amount">€ 250,00</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn download" onclick="downloadOfferte(event, '24700018')">
+                                        <span style="font-size: 16px;">⬇</span> Downloaden
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details1">
+                            <td colspan="9" class="details-cell">
+                                <div class="details-content">
+
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Test 09012026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Budgethouder Nick van Lieropp</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">SCHOOLINFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid" style="grid-template-columns: 1fr 1fr;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Groene School</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">00ZV</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">VO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNUMMER</span>
+                                                    <span class="detail-value">1009</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">36</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">TOEGEKENDE TICKETS</div>
+                                            <div class="tickets-grid" style="margin-top: 16px;">
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">CJP Schoolier</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc"></span> stuks</div>
+                                                </div>
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">Totaal Tickets</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="total1"></span> stuk</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BESTELGEGEVENS</div>
+                                            <table class="products-table" style="margin-top: 12px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PRODUCT</th>
+                                                        <th style="text-align: center;">AANTAL</th>
+                                                        <th style="text-align: center;">BTW</th>
+                                                        <th style="text-align: right;">TOTAAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CJP schoolier</td>
+                                                        <td style="text-align: center;">30</td>
+                                                        <td style="text-align: center;">9%</td>
+                                                        <td style="text-align: right;">€ 225,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Verzendkosten</td>
+                                                        <td style="text-align: center;">1</td>
+                                                        <td style="text-align: center;">21%</td>
+                                                        <td style="text-align: right;">€ 25,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Totaal incl. BTW</strong></td>
+                                                        <td colspan="2"></td>
+                                                        <td style="text-align: right;"><strong>€ 250,00</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr class="data-row" onclick="toggleRow(this, 'details2')">
+                            <td class="id-col">24700018</td>
+                            <td>10-01-2026</td>
+                            <td>1009</td>
+                            <td>VO</td>
+                            <td>NS</td>
+                            <td>46</td>
+                            <td><span class="status-badge status-submitted">Aangemaakt</span></td>
+                            <td class="amount">€ 243,00</td>
+                            <td>
+                                <button class="action-btn reject" onclick="rejectEntry(event, '24700018')">
+                                    <span style="font-size: 16px;">✕</span> Afkeuren
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details2">
+                            <td colspan="9" class="details-cell">
+                                <div class="details-content">
+                                   
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:contact@school1009.nl">contact@school1009.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Schoolweg 15<br>1000AA AMSTERDAM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">10012026-B</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Afdeling Onderwijs</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Jan de Vries</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:j.devries@school1009.nl">j.devries@school1009.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">SCHOOLINFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid" style="grid-template-columns: 1fr 1fr;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Groene School</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">00ZV</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">VO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNUMMER</span>
+                                                    <span class="detail-value">1009</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Schoolweg 15<br>1000AA AMSTERDAM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">50</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">TOEGEKENDE TICKETS</div>
+                                            <div class="tickets-grid" style="margin-top: 16px;">
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">CJP Schoolier</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc"></span> stuks</div>
+                                                </div>
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">Totaal Tickets</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="total2"></span> stuk</div>
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <button class="save-tickets-btn" onclick="saveTickets(event, '24700018')">
+                                                    Opslaan
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BESTELGEGEVENS</div>
+                                            <table class="products-table" style="margin-top: 12px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PRODUCT</th>
+                                                        <th style="text-align: center;">AANTAL</th>
+                                                        <th style="text-align: center;">BTW</th>
+                                                        <th style="text-align: right;">TOTAAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CJP schoolier</td>
+                                                        <td style="text-align: center;">46</td>
+                                                        <td style="text-align: center;">9%</td>
+                                                        <td style="text-align: right;">€ 218,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Verzendkosten</td>
+                                                        <td style="text-align: center;">1</td>
+                                                        <td style="text-align: center;">21%</td>
+                                                        <td style="text-align: right;">€ 25,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Totaal incl. BTW</strong></td>
+                                                        <td colspan="2"></td>
+                                                        <td style="text-align: right;"><strong>€ 243,00</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr class="data-row" onclick="toggleRow(this, 'details3')">
+                            <td class="id-col">24700018</td>
+                            <td>09-01-2026</td>
+                            <td>1029</td>
+                            <td>MBO</td>
+                            <td>NS</td>
+                            <td>30</td>
+                            <td><span class="status-badge status-wachten">Budgethouder goedgekeurd</span></td>
+                            <td class="amount">€ 250,00</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn download" onclick="downloadOfferte(event, '24700018')">
+                                        <span style="font-size: 16px;">⬇</span> Download offerte
+                                    </button>
+                                    <button class="action-btn download" onclick="downloadInvoice(event, '24700018')">
+                                        <span style="font-size: 16px;">⬇</span> Download factuur
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details3">
+                            <td colspan="9" class="details-cell">
+                                <div class="details-content">
+                                    
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:admin@school1029.nl">admin@school1029.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Kerkstraat 88<br>2000BB ROTTERDAM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">09012026-MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">MBO Projecten 2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Maria Jansen</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:m.jansen@school1029.nl">m.jansen@school1029.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">SCHOOLINFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid" style="grid-template-columns: 1fr 1fr;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Schoolnaam Nick</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">00ZV</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNUMMER</span>
+                                                    <span class="detail-value">1029</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Kerkstraat 88<br>2000BB ROTTERDAM</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">36</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">TOEGEKENDE TICKETS</div>
+                                            <div class="tickets-grid" style="margin-top: 16px;">
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">CJP Schoolier</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc"></span> stuks</div>
+                                                </div>
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">Totaal Tickets</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="total3"></span> stuk</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BESTELGEGEVENS</div>
+                                            <table class="products-table" style="margin-top: 12px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PRODUCT</th>
+                                                        <th style="text-align: center;">AANTAL</th>
+                                                        <th style="text-align: center;">BTW</th>
+                                                        <th style="text-align: right;">TOTAAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CJP schoolier</td>
+                                                        <td style="text-align: center;">30</td>
+                                                        <td style="text-align: center;">9%</td>
+                                                        <td style="text-align: right;">€ 225,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Verzendkosten</td>
+                                                        <td style="text-align: center;">1</td>
+                                                        <td style="text-align: center;">21%</td>
+                                                        <td style="text-align: right;">€ 25,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Totaal incl. BTW</strong></td>
+                                                        <td colspan="2"></td>
+                                                        <td style="text-align: right;"><strong>€ 250,00</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Row 4 -->
+                        <tr class="data-row" onclick="toggleRow(this, 'details4')">
+                            <td class="id-col">24700018</td>
+                            <td>09-01-2026</td>
+                            <td>10233</td>
+                            <td>MBO</td>
+                            <td>NS</td>
+                            <td>46</td>
+                            <td><span class="status-badge status-afgewezen">Afgewezen</span></td>
+                            <td class="amount">€ 73,00</td>
+                            <td>
+                                <button class="action-btn download" onclick="downloadOfferte(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Downloaden
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details4">
+                            <td colspan="9" class="details-cell">
+                                <div class="details-content">
+
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:finance@school10233.nl">finance@school10233.nl</a></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Stationsplein 12<br>3500CC UTRECHT</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">REF-10233-2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">KOSTENPLAATS</span>
+                                                    <span class="detail-value">Budget Culturele Activiteiten</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER</span>
+                                                    <span class="detail-value">Peter Hendriks</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BUDGETHOUDER EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:p.hendriks@school10233.nl">p.hendriks@school10233.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">SCHOOLINFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid" style="grid-template-columns: 1fr 1fr;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">Schoolnaam Nick 2025/2026</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">10AB</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNUMMER</span>
+                                                    <span class="detail-value">10233</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Stationsplein 12<br>3500CC UTRECHT</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">120</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">TOEGEKENDE TICKETS</div>
+                                            <div class="tickets-grid" style="margin-top: 16px;">
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">CJP Schoolier</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc"></span> stuks</div>
+                                                </div>
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">Totaal Tickets</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="total4"></span> stuk</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BESTELGEGEVENS</div>
+                                            <table class="products-table" style="margin-top: 12px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PRODUCT</th>
+                                                        <th style="text-align: center;">AANTAL</th>
+                                                        <th style="text-align: center;">BTW</th>
+                                                        <th style="text-align: right;">TOTAAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CJP schoolier</td>
+                                                        <td style="text-align: center;">46</td>
+                                                        <td style="text-align: center;">9%</td>
+                                                        <td style="text-align: right;">€ 48,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Verzendkosten</td>
+                                                        <td style="text-align: center;">1</td>
+                                                        <td style="text-align: center;">21%</td>
+                                                        <td style="text-align: right;">€ 25,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Totaal incl. BTW</strong></td>
+                                                        <td colspan="2"></td>
+                                                        <td style="text-align: right;"><strong>€ 73,00</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Row 5 -->
+                        <tr class="data-row" onclick="toggleRow(this, 'details5')">
+                            <td class="id-col">24700018</td>
+                            <td>09-01-2026</td>
+                            <td>10232</td>
+                            <td>MBO</td>
+                            <td>NS</td>
+                            <td>10</td>
+                            <td><span class="status-badge status-betaald">Betaald</span></td>
+                            <td class="amount">€ 100,00</td>
+                            <td>
+                                <button class="action-btn download" onclick="downloadInvoice(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Downloaden
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" id="details5">
+                            <td colspan="9" class="details-cell">
+                                <div class="details-content">
+
+                                    <div class="details-sections">
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">FACTUURGEGEVENS</div>
+                                            <div class="details-grid" style="margin-top: 20px;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">NAAM</span>
+                                                    <span class="detail-value">MBO School</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">REFERENTIENUMMER</span>
+                                                    <span class="detail-value">MBO-2026-001</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BEZORGADRES</span>
+                                                    <span class="detail-value">Schoolstraat 100<br>1000AA Amsterdam</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">EMAIL</span>
+                                                    <span class="detail-value"><a href="mailto:info@mboschool.nl">info@mboschool.nl</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                                <div style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">SCHOOLINFORMATIE</div>
+                                                <a href="#" class="bekijk-school">Bekijk school →</a>
+                                            </div>
+                                            <div class="details-grid" style="grid-template-columns: 1fr 1fr;">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNAAM</span>
+                                                    <span class="detail-value">MBO School Amsterdam</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">BRIN</span>
+                                                    <span class="detail-value">11CD</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLTYPE</span>
+                                                    <span class="detail-value">MBO</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">SCHOOLNUMMER</span>
+                                                    <span class="detail-value">10232</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">ADRES</span>
+                                                    <span class="detail-value">Schoolstraat 100<br>1000AA Amsterdam</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">STUDENTEN DUO</span>
+                                                    <span class="detail-value">85</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">TOEGEKENDE TICKETS</div>
+                                            <div class="tickets-grid" style="margin-top: 16px;">
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">CJP Schoolier</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234700" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="8011234710" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="cjp5"></span> stuks</div>
+                                                </div>
+                                                <div class="ticket-box">
+                                                    <div class="ticket-label">Totaal Tickets</div>
+                                                    <div class="ticket-range">
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                                        <div style="color: #94a3b8;">→</div>
+                                                        <input type="text" class="ticket-number ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                                    </div>
+                                                    <div class="ticket-count"><span class="ticket-calc" data-group="total5"></span> stuk</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="details-section">
+                                            <div class="section-title-desktop">BESTELGEGEVENS</div>
+                                            <table class="products-table" style="margin-top: 12px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PRODUCT</th>
+                                                        <th style="text-align: center;">AANTAL</th>
+                                                        <th style="text-align: center;">BTW</th>
+                                                        <th style="text-align: right;">TOTAAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CJP schoolier</td>
+                                                        <td style="text-align: center;">10</td>
+                                                        <td style="text-align: center;">9%</td>
+                                                        <td style="text-align: right;">€ 75,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Verzendkosten</td>
+                                                        <td style="text-align: center;">1</td>
+                                                        <td style="text-align: center;">21%</td>
+                                                        <td style="text-align: right;">€ 25,00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Totaal incl. BTW</strong></td>
+                                                        <td colspan="2"></td>
+                                                        <td style="text-align: right;"><strong>€ 100,00</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <div class="pagination-info">Pagina 1 van 4 (137 resultaten)</div>
+                <div class="pagination-controls">
+                    <select class="per-page">
+                        <option>50 per pagina</option>
+                        <option>100 per pagina</option>
+                        <option>200 per pagina</option>
+                    </select>
+                    <button class="page-btn">‹‹</button>
+                    <button class="page-btn">‹</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">›</button>
+                    <button class="page-btn">››</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE VERSION -->
+    <div class="mobile-view">
+        <div class="mobile-container">
+            <div class="mobile-header">
+                <h1>Schooltoer</h1>
+                <div class="date-filters">
+                    <div class="date-input-group">
+                        <label>Datum van</label>
+                        <input type="date" value="2026-01-01">
+                    </div>
+                    <div class="date-input-group">
+                        <label>Datum t/m</label>
+                        <input type="date" value="2026-01-16">
+                    </div>
+                </div>
+                <div class="filter-dropdowns">
+                    <select class="filter-select">
+                        <option>Alle statussen</option>
+                        <option>Afgewezen</option>
+                        <option>Submitted</option>
+                        <option>Wachten op goedkeuring</option>
+                        <option>Betaald</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Alle schooltypes</option>
+                        <option>VO</option>
+                        <option>MBO</option>
+                    </select>
+                </div>
+                <div class="mobile-search">
+                    <input type="text" placeholder="Zoek op school, partner...">
+                </div>
+            </div>
+
+            <div class="summary-bar">
+                <span class="summary-text">137 resultaten gevonden</span>
+                <a href="#" class="filters-link-mobile" onclick="resetFilters(); return false;">Filters annuleren</a>
+            </div>
+
+            <div class="card-list">
+                <!-- Card 1 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#24700018</span>
+                            <span class="school-number">School 1009</span>
+                        </div>
+                        <div class="card-amount">€ 225,00</div>
+                    </div>
+                    <div class="school-name-card">Groene School</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">10-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">VO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TICKETS</span>
+                            <span class="info-value">NS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">31</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-afgewezen">Afgewezen</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div class="details-content-mobile">
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Referentienummer</span>
+                                    <span class="detail-value-mobile">09012026</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Kostenplaats</span>
+                                    <span class="detail-value-mobile">Test 09012026</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder</span>
+                                    <span class="detail-value-mobile">Budgethouder Nick van Lieropp</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:nicktest0901@cjp.nl">nicktest0901@cjp.nl</a></span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">SCHOOLINFORMATIE</span>
+                                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnaam</span>
+                                    <span class="detail-value-mobile">Groene School</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">BRIN</span>
+                                    <span class="detail-value-mobile">00ZV</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schooltype</span>
+                                    <span class="detail-value-mobile">VO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnummer</span>
+                                    <span class="detail-value-mobile">1009</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Johannes Bogermanstraat 25<br>9291HA KOLLUM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Studenten DUO</span>
+                                    <span class="detail-value-mobile">36</span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">TOEGEKENDE TICKETS</span>
+                                </div>
+                                <div class="tickets-mobile">
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">CJP Schoolier</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="cjp1m"></span> stuks</div>
+                                    </div>
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">Totaal Tickets</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0421" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0422" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="total1m"></span> stuk</div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">BESTELGEGEVENS</span>
+                                </div>
+                                <div class="products-table-mobile">
+                                    <div class="product-row-mobile">
+                                        <div>Product</div>
+                                        <div class="product-value-mobile">Aantal</div>
+                                        <div class="product-value-mobile">BTW</div>
+                                        <div class="product-value-mobile">Totaal</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">CJP schoolier</div>
+                                        <div class="product-value-mobile">30</div>
+                                        <div class="product-value-mobile">9%</div>
+                                        <div class="product-value-mobile">€ 225,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Verzendkosten</div>
+                                        <div class="product-value-mobile">1</div>
+                                        <div class="product-value-mobile">21%</div>
+                                        <div class="product-value-mobile">€ 25,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Totaal incl. BTW</div>
+                                        <div class="product-value-mobile" style="grid-column: 2 / -1; text-align: right;"><strong>€ 250,00</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="action-buttons-mobile">
+                                <button class="btn-action-mobile btn-download-mobile" onclick="downloadMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Download offerte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#24700018</span>
+                            <span class="school-number">School 1009</span>
+                        </div>
+                        <div class="card-amount">€ 243,00</div>
+                    </div>
+                    <div class="school-name-card">Groene School</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">10-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">VO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TICKETS</span>
+                            <span class="info-value">NS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">46</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-submitted">Aangemaakt</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+
+                    <div class="card-details">
+                        <div class="details-content-mobile">
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:contact@school1009.nl">contact@school1009.nl</a></span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Schoolweg 15<br>1000AA AMSTERDAM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Referentienummer</span>
+                                    <span class="detail-value-mobile">10012026-B</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Kostenplaats</span>
+                                    <span class="detail-value-mobile">Afdeling Onderwijs</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder</span>
+                                    <span class="detail-value-mobile">Jan de Vries</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:j.devries@school1009.nl">j.devries@school1009.nl</a></span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">SCHOOLINFORMATIE</span>
+                                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnaam</span>
+                                    <span class="detail-value-mobile">Groene School</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">BRIN</span>
+                                    <span class="detail-value-mobile">00ZV</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schooltype</span>
+                                    <span class="detail-value-mobile">VO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnummer</span>
+                                    <span class="detail-value-mobile">1009</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Schoolweg 15<br>1000AA AMSTERDAM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Studenten DUO</span>
+                                    <span class="detail-value-mobile">50</span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">TOEGEKENDE TICKETS</span>
+                                </div>
+                                <div class="tickets-mobile">
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">CJP Schoolier</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234605" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="cjp2m"></span> stuks</div>
+                                    </div>
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">Totaal Tickets</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0421" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0423" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="total2m"></span> stuks</div>
+                                    </div>
+                                </div>
+                                <button class="save-tickets-btn" onclick="saveTickets(event, '24700018')">
+                                    Opslaan
+                                </button>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">BESTELGEGEVENS</span>
+                                </div>
+                                <div class="products-table-mobile">
+                                    <div class="product-row-mobile">
+                                        <div>Product</div>
+                                        <div class="product-value-mobile">Aantal</div>
+                                        <div class="product-value-mobile">BTW</div>
+                                        <div class="product-value-mobile">Totaal</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">CJP schoolier</div>
+                                        <div class="product-value-mobile">46</div>
+                                        <div class="product-value-mobile">9%</div>
+                                        <div class="product-value-mobile">€ 218,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Verzendkosten</div>
+                                        <div class="product-value-mobile">1</div>
+                                        <div class="product-value-mobile">21%</div>
+                                        <div class="product-value-mobile">€ 25,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Totaal incl. BTW</div>
+                                        <div class="product-value-mobile" style="grid-column: 2 / -1; text-align: right;"><strong>€ 243,00</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="action-buttons-mobile">
+                                <button class="btn-action-mobile btn-reject-mobile" onclick="rejectMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">✕</span> Afkeuren
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 - Expanded -->
+                <div class="budget-card expanded">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#24700018</span>
+                            <span class="school-number">School 1029</span>
+                        </div>
+                        <div class="card-amount">€ 250,00</div>
+                    </div>
+                    <div class="school-name-card">Schoolnaam Nick</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">09-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">MBO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TICKETS</span>
+                            <span class="info-value">NS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">30</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-wachten">Budgethouder goedgekeurd</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+
+                    <div class="card-details">
+                        <div class="details-content-mobile">
+                            
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:admin@school1029.nl">admin@school1029.nl</a></span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Kerkstraat 88<br>2000BB ROTTERDAM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Referentienummer</span>
+                                    <span class="detail-value-mobile">09012026-MBO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Kostenplaats</span>
+                                    <span class="detail-value-mobile">MBO Projecten 2026</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder</span>
+                                    <span class="detail-value-mobile">Maria Jansen</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:m.jansen@school1029.nl">m.jansen@school1029.nl</a></span>
+                                </div>
+                            </div>
+
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">SCHOOLINFORMATIE</span>
+                                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnaam</span>
+                                    <span class="detail-value-mobile">Schoolnaam Nick</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">BRIN</span>
+                                    <span class="detail-value-mobile">00ZV</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schooltype</span>
+                                    <span class="detail-value-mobile">MBO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnummer</span>
+                                    <span class="detail-value-mobile">1029</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Kerkstraat 88<br>2000BB ROTTERDAM</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Studenten DUO</span>
+                                    <span class="detail-value-mobile">36</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">TOEGEKENDE TICKETS</span>
+                                </div>
+                                <div class="tickets-mobile">
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">CJP Schoolier</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234590" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="cjp3m"></span> stuks</div>
+                                    </div>
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">Totaal Tickets</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0421" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0422" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="total3m"></span> stuk</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">BESTELGEGEVENS</span>
+                                </div>
+                                <div class="products-table-mobile">
+                                    <div class="product-row-mobile">
+                                        <div>Product</div>
+                                        <div class="product-value-mobile">Aantal</div>
+                                        <div class="product-value-mobile">BTW</div>
+                                        <div class="product-value-mobile">Totaal</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">CJP schoolier</div>
+                                        <div class="product-value-mobile">30</div>
+                                        <div class="product-value-mobile">9%</div>
+                                        <div class="product-value-mobile">€ 225,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Verzendkosten</div>
+                                        <div class="product-value-mobile">1</div>
+                                        <div class="product-value-mobile">21%</div>
+                                        <div class="product-value-mobile">€ 25,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Totaal incl. BTW</div>
+                                        <div class="product-value-mobile" style="grid-column: 2 / -1; text-align: right;"><strong>€ 250,00</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons-mobile">
+                                <button class="btn-action-mobile btn-reject-mobile" onclick="rejectMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">✕</span> Afkeuren
+                                </button>
+                                <button class="btn-action-mobile btn-download-mobile" onclick="downloadMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Download factuur
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#24700018</span>
+                            <span class="school-number">School 10233</span>
+                        </div>
+                        <div class="card-amount">€ 73,00</div>
+                    </div>
+                    <div class="school-name-card">Schoolnaam Nick 2025/2026</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">09-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">MBO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TICKETS</span>
+                            <span class="info-value">NS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">46</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-afgewezen">Afgewezen</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div class="details-content-mobile">
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:finance@school10233.nl">finance@school10233.nl</a></span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Stationsplein 12<br>3500CC UTRECHT</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Referentienummer</span>
+                                    <span class="detail-value-mobile">REF-10233-2026</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Kostenplaats</span>
+                                    <span class="detail-value-mobile">Budget Culturele Activiteiten</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder</span>
+                                    <span class="detail-value-mobile">Peter Hendriks</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:p.hendriks@school10233.nl">p.hendriks@school10233.nl</a></span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">SCHOOLINFORMATIE</span>
+                                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnaam</span>
+                                    <span class="detail-value-mobile">Schoolnaam Nick 2025/2026</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">BRIN</span>
+                                    <span class="detail-value-mobile">10AB</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schooltype</span>
+                                    <span class="detail-value-mobile">MBO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnummer</span>
+                                    <span class="detail-value-mobile">10233</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Stationsplein 12<br>3500CC UTRECHT</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Studenten DUO</span>
+                                    <span class="detail-value-mobile">120</span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">TOEGEKENDE TICKETS</span>
+                                </div>
+                                <div class="tickets-mobile">
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">CJP Schoolier</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234560" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234605" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="cjp4m"></span> stuks</div>
+                                    </div>
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">Totaal Tickets</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0421" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0422" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="total4m"></span> stuk</div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">BESTELGEGEVENS</span>
+                                </div>
+                                <div class="products-table-mobile">
+                                    <div class="product-row-mobile">
+                                        <div>Product</div>
+                                        <div class="product-value-mobile">Aantal</div>
+                                        <div class="product-value-mobile">BTW</div>
+                                        <div class="product-value-mobile">Totaal</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">CJP schoolier</div>
+                                        <div class="product-value-mobile">46</div>
+                                        <div class="product-value-mobile">9%</div>
+                                        <div class="product-value-mobile">€ 48,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Verzendkosten</div>
+                                        <div class="product-value-mobile">1</div>
+                                        <div class="product-value-mobile">21%</div>
+                                        <div class="product-value-mobile">€ 25,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Totaal incl. BTW</div>
+                                        <div class="product-value-mobile" style="grid-column: 2 / -1; text-align: right;"><strong>€ 73,00</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="action-buttons-mobile">
+                                <button class="btn-action-mobile btn-download-mobile" onclick="downloadMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Download offerte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="budget-card">
+                    <div class="card-header">
+                        <div class="card-id">
+                            <span class="id-number">#24700018</span>
+                            <span class="school-number">School 10232</span>
+                        </div>
+                        <div class="card-amount">€ 100,00</div>
+                    </div>
+                    <div class="school-name-card">MBO School Amsterdam</div>
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">DATUM</span>
+                            <span class="info-value">09-01-2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TYPE</span>
+                            <span class="info-value">MBO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TICKETS</span>
+                            <span class="info-value">NS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">AANTAL</span>
+                            <span class="info-value">10</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-row">
+                            <span class="status-badge-mobile status-betaald">Betaald</span>
+                            <span class="expand-icon" onclick="toggleCardMobile(this)">⌄</span>
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div class="details-content-mobile">
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">FACTUURGEGEVENS</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:info@mboschool.nl">info@mboschool.nl</a></span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Schoolstraat 100<br>1000AA Amsterdam</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Referentienummer</span>
+                                    <span class="detail-value-mobile">MBO-2026-001</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Kostenplaats</span>
+                                    <span class="detail-value-mobile">Budget Culturele Activiteiten</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder</span>
+                                    <span class="detail-value-mobile">Anna Bakker</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Budgethouder Email</span>
+                                    <span class="detail-value-mobile"><a href="mailto:a.bakker@mboschool.nl">a.bakker@mboschool.nl</a></span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">SCHOOLINFORMATIE</span>
+                                    <a href="#" class="bekijk-school-mobile">Bekijk school →</a>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnaam</span>
+                                    <span class="detail-value-mobile">MBO School Amsterdam</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">BRIN</span>
+                                    <span class="detail-value-mobile">11CD</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schooltype</span>
+                                    <span class="detail-value-mobile">MBO</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Schoolnummer</span>
+                                    <span class="detail-value-mobile">10232</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Adres</span>
+                                    <span class="detail-value-mobile">Schoolstraat 100<br>1000AA Amsterdam</span>
+                                </div>
+                                <div class="detail-row-mobile">
+                                    <span class="detail-label-mobile">Studenten DUO</span>
+                                    <span class="detail-value-mobile">85</span>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">TOEGEKENDE TICKETS</span>
+                                </div>
+                                <div class="tickets-mobile">
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">CJP Schoolier</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234700" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="8011234710" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="cjp5m"></span> stuks</div>
+                                    </div>
+                                    <div class="ticket-section-mobile">
+                                        <div class="ticket-label-mobile">Totaal Tickets</div>
+                                        <div class="ticket-range-mobile">
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0500" onchange="updateTicketCount(this)">
+                                            <div style="color: #94a3b8;">→</div>
+                                            <input type="text" class="ticket-number-mobile ticket-input" value="0403-0501" onchange="updateTicketCount(this)">
+                                        </div>
+                                        <div class="ticket-count-mobile"><span class="ticket-calc" data-group="total5m"></span> stuk</div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="details-section-mobile">
+                                <div class="section-header-mobile">
+                                    <span class="section-title-mobile">BESTELGEGEVENS</span>
+                                </div>
+                                <div class="products-table-mobile">
+                                    <div class="product-row-mobile">
+                                        <div>Product</div>
+                                        <div class="product-value-mobile">Aantal</div>
+                                        <div class="product-value-mobile">BTW</div>
+                                        <div class="product-value-mobile">Totaal</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">CJP schoolier</div>
+                                        <div class="product-value-mobile">10</div>
+                                        <div class="product-value-mobile">9%</div>
+                                        <div class="product-value-mobile">€ 75,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Verzendkosten</div>
+                                        <div class="product-value-mobile">1</div>
+                                        <div class="product-value-mobile">21%</div>
+                                        <div class="product-value-mobile">€ 25,00</div>
+                                    </div>
+                                    <div class="product-row-mobile">
+                                        <div class="product-label-mobile">Totaal incl. BTW</div>
+                                        <div class="product-value-mobile" style="grid-column: 2 / -1; text-align: right;"><strong>€ 100,00</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="action-buttons-mobile">
+                                <button class="btn-action-mobile btn-download-mobile" onclick="downloadMobile(event, '24700018')">
+                                    <span style="font-size: 16px;">⬇</span> Download factuur
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Desktop: Toggle row details
+        function toggleRow(row, detailsId) {
+            const allRows = document.querySelectorAll('.data-row');
+            const allDetails = document.querySelectorAll('.details-row');
+            const details = document.getElementById(detailsId);
+            
+            if (row.classList.contains('active')) {
+                row.classList.remove('active');
+                details.classList.remove('show');
+            } else {
+                allRows.forEach(r => r.classList.remove('active'));
+                allDetails.forEach(d => d.classList.remove('show'));
+                row.classList.add('active');
+                details.classList.add('show');
+            }
+        }
+
+        // Desktop: Action handlers
+        function rejectEntry(event, id) {
+            event.stopPropagation();
+            if (confirm(`Weet u zeker dat u factuur ${id} wilt afkeuren?`)) {
+                alert(`Factuur ${id} afgekeurd!`);
+            }
+        }
+
+        function downloadOfferte(event, id) {
+    event.stopPropagation();
+    alert(`Offerte ${id} wordt gedownload...`);
+}
+
+        // Mobile: Toggle card expansion
+        function toggleCardMobile(icon) {
+            const card = icon.closest('.budget-card');
+            card.classList.toggle('expanded');
+        }
+
+        function rejectMobile(event, id) {
+            event.stopPropagation();
+            if (confirm(`Factuur ${id} afkeuren?`)) {
+                alert(`Factuur ${id} afgekeurd!`);
+            }
+        }
+
+        function downloadMobile(event, id) {
+            event.stopPropagation();
+            alert(`Factuur ${id} wordt gedownload...`);
+        }
+
+        // Filter reset
+        // Filter reset
+        function resetFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('schooltypeFilter').value = 'all';
+            updateFilterCount();
+        }
+
+        // Count and update active filters
+        function updateFilterCount() {
+            let count = 0;
+            
+            // Desktop filters
+            const statusFilter = document.getElementById('statusFilter');
+            const schooltypeFilter = document.getElementById('schooltypeFilter');
+            
+            if (statusFilter && statusFilter.value !== 'all') count++;
+            if (schooltypeFilter && schooltypeFilter.value !== 'all') count++;
+            
+            // Update desktop link
+            const desktopLink = document.querySelector('.filters-link');
+            if (desktopLink) {
+                if (count > 0) {
+                    desktopLink.innerHTML = `Filters annuleren (${count})`;
+                } else {
+                    desktopLink.innerHTML = 'Filters annuleren';
+                }
+            }
+            
+            // Update mobile link
+            const mobileLink = document.querySelector('.filters-link-mobile');
+            if (mobileLink) {
+                if (count > 0) {
+                    mobileLink.innerHTML = `Filters annuleren (${count})`;
+                } else {
+                    mobileLink.innerHTML = 'Filters annuleren';
+                }
+            }
+        }
+
+        // Add change listeners to filters
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const schooltypeFilter = document.getElementById('schooltypeFilter');
+            
+            if (statusFilter) {
+                statusFilter.addEventListener('change', updateFilterCount);
+            }
+            if (schooltypeFilter) {
+                schooltypeFilter.addEventListener('change', updateFilterCount);
+            }
+            
+            // Mobile filters
+            const mobileFilters = document.querySelectorAll('.filter-select');
+            mobileFilters.forEach(filter => {
+                filter.addEventListener('change', updateFilterCount);
+            });
+            
+            // Initial count
+            updateFilterCount();
+        });
+
+        // Pagination
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                    if (this.textContent.match(/\d/)) {
+                        this.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // Update ticket count when input changes
+        function updateTicketCount(input) {
+            const ticketBox = input.closest('.ticket-box, .ticket-section-mobile');
+            const inputs = ticketBox.querySelectorAll('.ticket-input');
+            const calcSpan = ticketBox.querySelector('.ticket-calc');
+            
+            if (inputs.length === 2) {
+                const start = parseInt(inputs[0].value.replace(/\D/g, ''));
+                const end = parseInt(inputs[1].value.replace(/\D/g, ''));
+                const count = end - start;
+                calcSpan.textContent = count;
+            }
+        }
+
+        // Calculate all ticket counts on page load
+        function calculateAllTickets() {
+            document.querySelectorAll('.ticket-box, .ticket-section-mobile').forEach(box => {
+                const inputs = box.querySelectorAll('.ticket-input');
+                const calcSpan = box.querySelector('.ticket-calc');
+                
+                if (inputs.length === 2 && calcSpan) {
+                    const start = parseInt(inputs[0].value.replace(/\D/g, ''));
+                    const end = parseInt(inputs[1].value.replace(/\D/g, ''));
+                    const count = end - start;
+                    calcSpan.textContent = count;
+                }
+            });
+        }
+
+        // Run calculation on page load
+        calculateAllTickets();
+    </script>
+</body>
+</html>
