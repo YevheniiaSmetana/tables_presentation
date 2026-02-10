@@ -842,14 +842,27 @@ tbody td {
 
         /* ===== MOBILE STYLES (< 768px) ===== */
         @media (max-width: 767px) {
-            .desktop-view,
-    .tablet-view {
-        display: none !important;
-    }
+            .cjp-sidebar,
+            .cjp-header {
+                display: none !important;
+            }
+            
+            .cjp-main {
+                margin-left: 0;
+                margin-top: 0;
+                padding: 0;
+                max-width: 100vw;
+                min-height: 0;
+            }
 
-    .mobile-view {
-        display: block !important; /* Важно !important */
-    }
+            .desktop-view,
+            .tablet-view {
+                display: none !important;
+            }
+
+            .mobile-view {
+                display: block !important; 
+            }
             .mobile-container {
                 min-height: 100vh;
                 background: #f5f7fa;
