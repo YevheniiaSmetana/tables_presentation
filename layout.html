@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJP Layout Components</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            color: white;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .cjp-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #000000;
+            border-right: 1px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .cjp-logo {
+            padding: 24px 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .cjp-logo svg {
+            width: 60px;
+            height: auto;
+        }
+
+        .cjp-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .cjp-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #999;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .cjp-nav-item:hover {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .cjp-nav-item.active {
+            background: #0a0a0a;
+            color: #00ACEC;
+            border-left-color: #00ACEC;
+        }
+
+        .cjp-nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cjp-logout {
+            padding: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .cjp-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #999;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .cjp-logout-btn:hover {
+            color: #ff4444;
+        }
+
+        /* ===== HEADER ===== */
+        .cjp-header {
+            position: fixed;
+            top: 0;
+            left: 240px;
+            right: 0;
+            height: 70px;
+            background: #000000;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 999;
+        }
+
+        .cjp-header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00ACEC;
+        }
+
+        .cjp-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cjp-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cjp-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #00ACEC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .cjp-user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        /* ===== MAIN CONTENT AREA ===== */
+        .cjp-main {
+            margin-left: 240px;
+            margin-top: 70px;
+            padding: 24px;
+            min-height: calc(100vh - 70px);
+            background: #f5f7fa;
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 767px) {
+            .cjp-sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #1a1a1a;
+            }
+
+            .cjp-header {
+                left: 0;
+                position: sticky;
+                top: 0;
+            }
+
+            .cjp-main {
+                margin-left: 0;
+                margin-top: 0;
+                padding: 16px;
+            }
+
+            .cjp-nav {
+                display: none;
+            }
+
+            .cjp-logout {
+                display: none;
+            }
+
+            .cjp-sidebar.mobile-open .cjp-nav,
+            .cjp-sidebar.mobile-open .cjp-logout {
+                display: block;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                padding: 16px 20px;
+                background: none;
+                border: none;
+                color: #999;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+
+        /* ===== TABLET ===== */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .cjp-sidebar {
+                width: 200px;
+            }
+
+            .cjp-header {
+                left: 200px;
+            }
+
+            .cjp-main {
+                margin-left: 200px;
+            }
+
+            .cjp-nav-item {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="cjp-sidebar" id="sidebar">
+        <div class="cjp-logo">
+            <svg viewBox="0 0 60 30" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 4C8 1.79086 9.79086 0 12 0H18C20.2091 0 22 1.79086 22 4V12C22 14.2091 20.2091 16 18 16H12C9.79086 16 8 14.2091 8 12V4Z"/>
+                <path d="M0 20C0 17.7909 1.79086 16 4 16H10C12.2091 16 14 17.7909 14 20V26C14 28.2091 12.2091 30 10 30H4C1.79086 30 0 28.2091 0 26V20Z"/>
+                <path d="M26 4C26 1.79086 27.7909 0 30 0H36C38.2091 0 40 1.79086 40 4V10C40 12.2091 38.2091 14 36 14H30C27.7909 14 26 12.2091 26 10V4Z"/>
+                <path d="M44 8C44 5.79086 45.7909 4 48 4H54C56.2091 4 58 5.79086 58 8V26C58 28.2091 56.2091 30 54 30H48C45.7909 30 44 28.2091 44 26V8Z"/>
+            </svg>
+        </div>
+
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰ Menu</button>
+
+        <nav class="cjp-nav">
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon">🌍</span>
+                Bekijk al het aanbod
+            </a>
+            <a href="#" class="cjp-nav-item active">
+                <span class="cjp-nav-icon">💳</span>
+                Mijn CJP
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon">👤</span>
+                Mijn profiel
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon">📋</span>
+                Mijn lidmaatschappen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon">🛍️</span>
+                Mijn bestellingen
+            </a>
+        </nav>
+
+        <div class="cjp-logout">
+            <button class="cjp-logout-btn">
+                <span class="cjp-nav-icon">🚪</span>
+                Uitloggen
+            </button>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="cjp-header">
+        <div class="cjp-header-title">Schooltoer</div>
+        <div class="cjp-header-actions">
+            <div class="cjp-user-info">
+                <div class="cjp-user-avatar">NK</div>
+                <div class="cjp-user-name">Nick Kowalski</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="cjp-main">
+        <!-- Your table content will go here -->
+        <div style="background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="color: #0f172a; margin-bottom: 16px;">Content Area</h2>
+            <p style="color: #64748b;">This is where your Schooltoer table will be placed.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+    </script>
+</body>
+</html>

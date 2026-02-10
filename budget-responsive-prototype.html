@@ -5,6 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget - Responsive Prototype</title>
     <style>
+/* ===== CJP LAYOUT STYLES ===== */
+.cjp-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #000000;
+    border-right: 1px solid #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.cjp-logo {
+    padding: 24px 20px;
+}
+
+.cjp-logo svg {
+    width: 60px;
+    height: auto;
+}
+
+.cjp-nav {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.cjp-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+
+.cjp-nav-item:hover {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.cjp-nav-item.active {
+    background: #0a0a0a;
+    color: #00ACEC;
+    border-left-color: #00ACEC;
+}
+
+.cjp-nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cjp-logout {
+    padding: 20px;
+}
+
+.cjp-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.cjp-logout-btn:hover {
+    color: #00ACEC;
+}
+
+.cjp-header {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    height: 70px;
+    background: #000000;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 999;
+}
+
+.cjp-header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #00ACEC;
+}
+
+.cjp-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cjp-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cjp-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #00ACEC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000;
+}
+
+.cjp-user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.cjp-main {
+    margin-left: 240px;
+    margin-top: 70px;
+    padding: 24px;
+    min-height: calc(100vh - 70px);
+    background: #f5f7fa;
+    max-width: calc(100vw - 240px);
+    overflow-x: hidden;
+}
+
+.cjp-logo img {
+    filter: brightness(0) invert(1);
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -98,11 +251,13 @@
 
 .table-wrapper {
     overflow-x: auto;
+    max-width: 100%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: auto;
 }
 
 thead {
@@ -144,9 +299,9 @@ tbody td {
 /* STATUS BADGES */
 .status-badge {
     display: inline-block;
-    padding: 5px 12px;
+    padding: 5px 10px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -386,21 +541,22 @@ tbody td {
     }
 
     .desktop-view {
-        display: block !important; /* Важно !important */
+        display: block !important;
     }
     body {
-        padding: 24px;
+        padding: 0;
+        background: #0a0a0a;
     }
-
+    
     .container {
-        max-width: 1600px;
+        max-width: 100%; 
         margin: 0 auto;
         border-radius: 12px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
 
     .header {
-        padding: 32px 32px 24px;
+        padding: 32px 24px 24px;
     }
 
     .header h1 {
@@ -447,12 +603,12 @@ tbody td {
     }
 
     thead th {
-        padding: 16px 20px;
+        padding: 16px 12px;
         font-size: 12px;
     }
 
     tbody td {
-        padding: 18px 20px;
+        padding: 18px 12px;
         font-size: 14px;
     }
 
@@ -578,15 +734,15 @@ tbody td {
     .filters-link {
         font-size: 13px;
         padding: 8px 0;
-        margin-top: 0; /* Изменить */
+        margin-top: 0; 
     }
 
     /* ТАБЛИЦА С ГОРИЗОНТАЛЬНЫМ СКРОЛЛОМ */
     .table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        margin: 0 -20px; /* Добавить - позволяет таблице растягиваться */
-        padding: 0 20px; /* Добавить */
+        margin: 0 -20px;
+        padding: 0 20px; 
     }
 
     table {
@@ -1079,8 +1235,69 @@ tbody td {
     </style>
 </head>
 <body>
-    <!-- DESKTOP VERSION -->
-    <div class="desktop-view">
+    <!-- ДОБАВИТЬ SIDEBAR -->
+    <div class="cjp-sidebar">
+        <div class="cjp-logo">
+            <img src="cjp_logo.svg" alt="CJP Logo"/>
+        </div>
+
+        <nav class="cjp-nav">
+            <a href="#" class="cjp-nav-item active">
+                <span class="cjp-nav-icon"></span>
+                Bestellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Self Service
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Partners
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Scholen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Systeem Instellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Rapportages
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Instellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Transport
+            </a>
+        </nav>
+
+        <div class="cjp-logout">
+            <button class="cjp-logout-btn">
+                <span class="cjp-nav-icon"></span>
+                Uitloggen
+            </button>
+        </div>
+    </div>
+
+    <!-- ДОБАВИТЬ HEADER -->
+    <div class="cjp-header">
+        <div class="cjp-header-title">Budget</div>
+        <div class="cjp-header-actions">
+            <div class="cjp-user-info">
+                <div class="cjp-user-avatar">NK</div>
+                <div class="cjp-user-name">Nick Kowalski</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОБЕРНУТЬ desktop-view в .cjp-main -->
+    <div class="cjp-main">
+        <div class="desktop-view">
         <div class="container">
             <div class="header">
                 <h1>Budget</h1>
@@ -1668,6 +1885,7 @@ tbody td {
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- MOBILE VERSION -->

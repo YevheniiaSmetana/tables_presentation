@@ -5,6 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schooltoer - Responsive Prototype</title>
     <style>
+        /* ===== CJP LAYOUT STYLES ===== */
+.cjp-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #000000;
+    border-right: 1px solid #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.cjp-logo {
+    padding: 24px 20px;
+}
+
+.cjp-logo svg {
+    width: 60px;
+    height: auto;
+}
+
+.cjp-nav {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.cjp-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+
+.cjp-nav-item:hover {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.cjp-nav-item.active {
+    background: #0a0a0a;
+    color: #00ACEC;
+    border-left-color: #00ACEC;
+}
+
+.cjp-nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cjp-logout {
+    padding: 20px;
+}
+
+.cjp-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.cjp-logout-btn:hover {
+    color: #00ACEC;
+}
+
+.cjp-header {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    height: 70px;
+    background: #000000;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 999;
+}
+
+.cjp-header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #00ACEC;
+}
+
+.cjp-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cjp-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cjp-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #00ACEC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000;
+}
+
+.cjp-user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.cjp-main {
+    margin-left: 240px;
+    margin-top: 70px;
+    padding: 24px;
+    min-height: calc(100vh - 70px);
+    background: #f5f7fa;
+    max-width: calc(100vw - 240px);
+    overflow-x: hidden;
+}
+
+.cjp-logo img {
+    filter: brightness(0) invert(1);  
+}
         * {
             margin: 0;
             padding: 0;
@@ -93,11 +245,13 @@
 
         .table-wrapper {
             overflow-x: auto;
+            max-width: 100%;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
         thead {
@@ -139,11 +293,14 @@
         /* STATUS BADGES */
         .status-badge {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            white-space: nowrap;
+            white-space: normal;
+            text-align: center; 
+            line-height: 1.3; 
+            max-width: 140px; 
         }
 
         .status-afgewezen {
@@ -172,10 +329,16 @@
         }
 
         .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+            width: 100%; 
+        }
+
+        .action-buttons .action-btn {
+            min-width: 180px;  
+        }
 
         /* DETAILS */
         .details-row {
@@ -487,11 +650,12 @@
         @media (min-width: 1280px) {
            
             body {
-                padding: 24px;
-            }
+    padding: 0; /* Убрали padding, так как теперь есть sidebar */
+    background: #0a0a0a;
+}
 
             .container {
-                max-width: 1600px;
+                max-width: 100%;
                 margin: 0 auto;
                 border-radius: 12px;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -539,12 +703,12 @@
             }
 
             thead th {
-                padding: 16px 20px;
+                padding: 16px 12px;
                 font-size: 12px;
             }
 
             tbody td {
-                padding: 18px 20px;
+                padding: 18px 12px;
                 font-size: 14px;
             }
 
@@ -1230,9 +1394,70 @@
     </style>
 </head>
 <body>
-    <!-- DESKTOP VERSION -->
-    <div class="desktop-view">
-        <div class="container">
+    <div class="cjp-sidebar" id="sidebar">
+        <div class="cjp-logo">
+            <img src="cjp_logo.svg" alt="CJP Logo"/>
+        </div>
+
+        <nav class="cjp-nav">
+            <a href="#" class="cjp-nav-item  active">
+                <span class="cjp-nav-icon"></span>
+                Bestellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Self Service
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Partners
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Scholen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Systeem Instellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Rapportages
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Instellingen
+            </a>
+            <a href="#" class="cjp-nav-item">
+                <span class="cjp-nav-icon"></span>
+                Transport
+            </a>
+        </nav>
+
+        <div class="cjp-logout">
+            <button class="cjp-logout-btn">
+                <span class="cjp-nav-icon"></span>
+                Uitloggen
+            </button>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="cjp-header">
+        <div class="cjp-header-title">Schooltoer</div>
+        <div class="cjp-header-actions">
+            <div class="cjp-user-info">
+                <div class="cjp-user-avatar">NK</div>
+                <div class="cjp-user-name">Nick Kowalski</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="cjp-main">
+        <!-- DESKTOP VERSION -->
+        <div class="desktop-view">
+            <div class="container">
             <div class="header">
                 <h1>Schooltoer</h1>
                 <div class="filters">
@@ -1288,7 +1513,7 @@
                     <tbody id="tableBody">
                         <!-- Row 1 -->
                         <tr class="data-row" onclick="toggleRow(this, 'details1')">
-                            <td class="id-col">24700018</td>
+                            <td class="id-col">2470018</td>
                             <td>10-01-2026</td>
                             <td>1009</td>
                             <td>VO</td>
@@ -1436,7 +1661,7 @@
 
                         <!-- Row 2 -->
                         <tr class="data-row" onclick="toggleRow(this, 'details2')">
-                            <td class="id-col">24700018</td>
+                            <td class="id-col">2470019</td>
                             <td>10-01-2026</td>
                             <td>1009</td>
                             <td>VO</td>
@@ -1587,7 +1812,7 @@
 
                         <!-- Row 3 -->
                         <tr class="data-row" onclick="toggleRow(this, 'details3')">
-                            <td class="id-col">24700018</td>
+                            <td class="id-col">2470020</td>
                             <td>09-01-2026</td>
                             <td>1029</td>
                             <td>MBO</td>
@@ -1738,7 +1963,7 @@
 
                         <!-- Row 4 -->
                         <tr class="data-row" onclick="toggleRow(this, 'details4')">
-                            <td class="id-col">24700018</td>
+                            <td class="id-col">2470021</td>
                             <td>09-01-2026</td>
                             <td>10233</td>
                             <td>MBO</td>
@@ -1884,7 +2109,7 @@
 
                         <!-- Row 5 -->
                         <tr class="data-row" onclick="toggleRow(this, 'details5')">
-                            <td class="id-col">24700018</td>
+                            <td class="id-col">2470022</td>
                             <td>09-01-2026</td>
                             <td>10232</td>
                             <td>MBO</td>
@@ -2088,7 +2313,7 @@
                 <div class="budget-card">
                     <div class="card-header">
                         <div class="card-id">
-                            <span class="id-number">#24700018</span>
+                            <span class="id-number">#2470018</span>
                             <span class="school-number">School 1009</span>
                         </div>
                         <div class="card-amount">€ 225,00</div>
