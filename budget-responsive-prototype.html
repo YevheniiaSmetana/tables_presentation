@@ -2223,11 +2223,64 @@ tbody td {
         }
 
         // Filter reset
-        function resetFilters() {
-            document.getElementById('statusFilter').value = 'all';
-            document.getElementById('schooltypeFilter').value = 'all';
-            alert('Filters gereset!');
+function resetFilters() {
+    document.getElementById('statusFilter').value = 'all';
+    document.getElementById('schooltypeFilter').value = 'all';
+    updateFilterCount(); // Добавить эту строку
+}
+
+// Count and update active filters - ДОБАВИТЬ ЭТУ ФУНКЦИЮ
+function updateFilterCount() {
+    let count = 0;
+    
+    // Desktop filters
+    const statusFilter = document.getElementById('statusFilter');
+    const schooltypeFilter = document.getElementById('schooltypeFilter');
+    
+    if (statusFilter && statusFilter.value !== 'all') count++;
+    if (schooltypeFilter && schooltypeFilter.value !== 'all') count++;
+    
+    // Update desktop link
+    const desktopLink = document.querySelector('.filters-link');
+    if (desktopLink) {
+        if (count > 0) {
+            desktopLink.innerHTML = `Filters annuleren (${count})`;
+        } else {
+            desktopLink.innerHTML = 'Filters annuleren';
         }
+    }
+    
+    // Update mobile link
+    const mobileLink = document.querySelector('.filters-link-mobile');
+    if (mobileLink) {
+        if (count > 0) {
+            mobileLink.innerHTML = `Filters annuleren (${count})`;
+        } else {
+            mobileLink.innerHTML = 'Filters annuleren';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('statusFilter');
+    const schooltypeFilter = document.getElementById('schooltypeFilter');
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', updateFilterCount);
+    }
+    if (schooltypeFilter) {
+        schooltypeFilter.addEventListener('change', updateFilterCount);
+    }
+    
+    // Mobile filters
+    const mobileFilters = document.querySelectorAll('.filter-select');
+    mobileFilters.forEach(filter => {
+        filter.addEventListener('change', updateFilterCount);
+    });
+    
+    // Initial count
+    updateFilterCount();
+});
 
         // Pagination
         document.querySelectorAll('.page-btn').forEach(btn => {
